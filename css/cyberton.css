@@ -137,6 +137,7 @@ article time {
 
 .tags li {
     display: inline-block;
+    margin-right: 2px;
 }
 
 .tag-link {
