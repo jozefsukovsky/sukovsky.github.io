@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>technical debt on Jozef Sukovsky</title>
+    <link>https://sukovsky.com/tags/technical-debt/</link>
+    <description>Recent content in technical debt on Jozef Sukovsky</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>© Jozef Sukovsky</copyright>
+    <lastBuildDate>Sun, 04 Oct 2020 17:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://sukovsky.com/tags/technical-debt/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Technical debt will eat your feet</title>
+      <link>https://sukovsky.com/posts/3-tech-debt-will-murder-you/</link>
+      <pubDate>Sun, 04 Oct 2020 17:00:00 +0000</pubDate>
+      
+      <guid>https://sukovsky.com/posts/3-tech-debt-will-murder-you/</guid>
+      <description>No matter what you believe, no matter what you do. If you befriended Technical Debt, you already know, what&amp;rsquo;s coming. Eventually.
+Here and there, social networks offer some technical debt related brawls, jokes, memes and more or less relevant thoughts. My thoughts are the grumpy ones.
+The boring part The boring part of technical debt is it&amp;rsquo;s formal nature. Which is very well described in here Technical Debt. I won&amp;rsquo;t be re-inventing wheel talking about theory.</description>
+    </item>
+    
+  </channel>
+</rss>
