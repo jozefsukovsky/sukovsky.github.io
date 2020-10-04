@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Technical debt will eat your feet - Jozef Sukovsky</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	    
+    <meta name="twitter:card" content="No matter what you believe, no matter what you do. If you befriended Technical Debt, you already know, what&#39;s coming. Eventually." />
+    <meta name="twitter:creator" content="@jozefsukovsky"/>
+    <meta property="og:url" content="https://sukovsky.com/posts/3-tech-debt-will-eat-feet/" />
+    <meta property="og:title" content="Technical debt will eat your feet" />
+    <meta property="og:description" content="No matter what you believe, no matter what you do. If you befriended Technical Debt, you already know, what&#39;s coming. Eventually." />
+	<link rel="stylesheet" type="text/css" media="screen" href="https://sukovsky.com/css/normalize.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="https://sukovsky.com/css/syntax.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="https://sukovsky.com/css/cyberton.css" />
+</head><body><div class="grad-divider">
+<header>
+<div id="header" class="container">
+    <div class="branding">
+        <h1 class="site-title"><a href="https://sukovsky.com/">Jozef Sukovsky</a></h1>
+        <div class="site-copy">
+            My personal blog. Read it, now!
+            </div>
+    </div>
+    <input type="checkbox" id="res-nav">
+    <label for="res-nav"><div></div><div></div><div></div></label>
+    <nav id="main-nav">
+        <ul>
+            <li>
+				<a href="/">Home</a>
+			</li>
+			<li class="active">
+				<a href="/posts">Posts</a>
+			</li>
+			<li>
+				<a href="/about">About</a>
+			</li>
+			<li>
+				<a href="/tags">Tags</a>
+			</li>
+			</ul>
+    </nav>
+</div>
+</header><div id="content">
+        
+    <main>
+    <div id="content" class="container">
+    
+    <article>
+        <header>
+            <time datetime="2020-10-04 17:00:00 &#43;0000 &#43;0000">04 Oct 20 17:00 UTC</time><h1><a href="/posts/3-tech-debt-will-eat-feet/">Technical debt will eat your feet</a></h1>
+        </header>
+        <section>
+        <p>No matter what you believe, no matter what you do. If you befriended Technical Debt, you already know, what&rsquo;s coming. Eventually.</p>
+<p>Here and there, social networks offer some technical debt related brawls, jokes, memes and more or less relevant thoughts. My thoughts are the grumpy ones.</p>
+<h2 id="the-boring-part">The boring part</h2>
+<p>The boring part of technical debt is it&rsquo;s formal nature. Which is very well described in here <a href="https://en.wikipedia.org/wiki/Technical_debt">Technical Debt</a>. I won&rsquo;t be re-inventing wheel talking about theory. I will write from the developer point of view.</p>
+<h2 id="birth-of-the-devil">Birth of the devil</h2>
+<h3 id="the-starters">The starters</h3>
+<p>&ldquo;We are only about to start. We need just some prototype/demo/MVP. Let&rsquo;s just hire some cheap guy who will do this for us. There is even the internet full of an infinite number of people who are capable of finishing it yesterday. We won&rsquo;t waste time defining, we will just push, push, push, pivot, pivot, pivot, push&rdquo;.</p>
+<p>This is often the investor, who has good intentions, but is not very experienced in the field, has no idea about budgets, burning money in development. And they try the best they can do.</p>
+<p>Haven&rsquo;t experienced this from the beginning a lot, I mainly jump in, once such a product has a few years behind and plenty freelancers, contractors and interns behind. It started as a job offer on one of plenty freelancing markets, where people were offering incredible confidence, nicely crafted portfolios nobody ever explored, because who would lie in our world, right? They know something, but you can even sometimes google the snippets they used, including 4 years outdated libraries and/or tools. Because that outdated manual did not work with more recent versions.</p>
+<p>The moment things start breaking apart, they disappear. If you hire more people of this kind at the same time, they will compete with each other, not forming a working team. Because that other guy could be better and take everything, so let&rsquo;s get rather rid of him.</p>
+<p>If such &ldquo;starter product&rdquo; has sane investor, they will start over. Some will just continue hiring new cheap people and they do it 2-3-N more times until they are forced to start over. Or just throw it away, because the new shiny idea just rings behind the door.</p>
+<p>The problem of the product is not only the code quality, but the months spent discussing it with new people, explaining, evaluating, testing, fixing . It immediately causes close to zero patching/updating procedures to exist and being executed.</p>
+<h3 id="the-ad-hoc-ers">The ad-hoc-ers</h3>
+<p>&ldquo;We just need this. Fast forward days/weeks. And add this, remove that, add this more, this one is similar to the first requirement, should take you only so much time it took me to ask you&rdquo;.</p>
+<p>I hate these. They have something done, they experienced some success, they feel like they know best. They want a button, right, it only takes less than a second to click that button, why should it take hours to make it work?</p>
+<p>It is not worth fighting in this fight of balls. So sooner or later, they will end up using the same cheap &ldquo;do it all&rdquo; people mentioned earlier.</p>
+<h3 id="the-philantrops">The philantrops</h3>
+<p>&ldquo;We welcome people who want to learn, we will let them explore and grow&rdquo;.</p>
+<p>If they want to do filantrophy, they can still open intern positions and burn money there. With the exception, they won&rsquo;t let interns do the important work and at the end of the internship, they will know who is worth it and who is not. But for unknown reasons, some people do this for permanent positions too. Hiring over-confident people who don&rsquo;t have experience, but they claim how they want to learn. They are honest, mostly. They really do. But that says nothing about their potential. And also says nothing about their desires. Some of the people from such hiring will be just useless people, some other will sit there and will switch job the moment somebody will offer them 5 more bucks, because they gained some paper-proof experience. The worst case, they won&rsquo;t be able to find another job. You will be the only option.</p>
+<p>And the investor? They will have an unofficial stack overflow snippet mirror in their code base if they do this regularly.</p>
+<h3 id="the-hipster-money-burners">The hipster money-burners</h3>
+<p>&ldquo;We have table football, table tennis, more relaxing room than office room, gazillion of tea and coffee types, our own chef, relax when you don&rsquo;t feel to work&rdquo;.</p>
+<p>Here, I may be biased, because I personally like to distinguish work-time and the rest of the time. I experienced this many years ago, having all these goodies in the offices. Sometimes felt like it is a kindergarten. And the task board and workflow seconded it. A kindergarden development. With frustrated clients, management and stuck projects.</p>
+<h3 id="the-gamblers">The gamblers</h3>
+<p>&ldquo;Let&rsquo;s not waste time evaluating candidates, we will figure out in the process&rdquo;.</p>
+<p>This is actually similar to &ldquo;The philantrophs&rdquo;, with the difference they seek experienced people. They like to get fooled by nice speeches about the joy, attitue, hard working and sarcrificing everything. But people with such an attitude don&rsquo;t have to present it, because word of mouth does it for them. So whoever talks to you like this and they are not freshmen, they are fooling you. In a healthy conversation, both sides should know what the investors seek and what the candidates offer.</p>
+<p>In such environments, these imposters have gained some general trust since the beginning and it takes some time until they are terminated. The morale of the team is already destroyed, code worth considering whole replacement. And not so rarely, the same story just repeats.</p>
+<h3 id="the-octopuses">The octopuses</h3>
+<p>&ldquo;We have multiple prospects from different fields, let&rsquo;s prototype for everyone, something will be a success&rdquo;.</p>
+<p>These are similar to money burners. No focus. None. Ideas, desires, talking to prospects, burning money to develop different products, ways. One will be a success, right? Because we deserve success. It won&rsquo;t happen. Most likely. The world is not fair, doesn&rsquo;t matter what they deserve. They will either burn all money sooner than something is finished, or they will burn out people with constant context switching, doing prototypes to be demoed instead of making actual progress.</p>
+<h3 id="the-righters">The righters</h3>
+<p>&ldquo;Your opinion is interesting, but we hired you to do what we tell you, your experience helped you make it through, here it does not matter anymore, because we know it better.&rdquo; In such environment, everyone is just a laborer. Worse, if responsible for the crappy output they were forced to build. What goes hand in hand. Such toxicity can&rsquo;t be eased. Just run. Don&rsquo;t stop.</p>
+<h2 id="the-devil-will-eat-your-feet-or-murder-you">The devil will eat your feet. Or murder you</h2>
+<p>So, what is it like to be the investor (company owner, manager). If they are the good ones, they want to build a steady, growing, long-lasting business. And for some reason, they expect all people they work with to have the same attitude. Most employees won&rsquo;t be like that. Some won&rsquo;t care at all, some just won&rsquo;t be the right people for the job, some will sit there for 8 hours and goal met. Some will just wait to gain some experience to get a dream job.</p>
+<p>That&rsquo;s the reason, why there should be no excuses and no marketing-like managerial BS. Investors won&rsquo;t push more from people, I don&rsquo;t think it is right as well, but their duty is to push the right amount and make sure all the amounts will fit together. If there are mis-fitting parts, either fixing it or letting go. That guy. He will be maybe pissed. But he will figure his way forward.</p>
+<h2 id="fight-the-devil">Fight the devil</h2>
+<p>It is important to have a good working environment, but there should be always accent on the working parts. Trust is important, but as important as due diligence. Having rules is not about hierarchy, it is about the system you want to work for you. Not hesitating when terminating contracts with people who don&rsquo;t fit is usually a sad or even stressing thing to do. But it is less sad and less stressing than convincing good people to stay when they are on the move. Or when your product falls apart and nobody owns a magic wand.</p>
+<p>You know how hard it is to upgrade some software from version A.A.A to A.B.A, right? So, why do you think it will help waiting till the only working upgrade available is A.A.A to A.G.A? Do you know it is a chain reaction of upgrading many related libraries, rewriting some features, figuring out which features were discontinued, which have now different behavior&hellip;</p>
+<p>You don&rsquo;t have to be TDD. It is not so practical in many applications. But you know what happens when you change that non-important function somebody created 3 years ago and all people only guess how it works? Would just simple coverage help it? So you have not covered it before, you don&rsquo;t have time now, you will wait if some obvious issue appears in production?</p>
+<p>Nah, this ad-hoc configuration change you did and forgot about won&rsquo;t hurt you in the future.</p>
+<p>Clueless people doing something and then hiding and pretending they have no idea what happened. That is very helpful.</p>
+<p>I don&rsquo;t think it requires much to minimize the technical debt. It will grow, no doubt. Many times during the life of a product, there will be decisions made which are important and will just push you some rests. But these are enough. Don&rsquo;t add some which are easy to prevent.</p>
+
+        </section>
+        
+        
+        <section>
+            <h3>Tags</h3>
+            <ul class="tags">
+                
+                    <li><a class="tag-link" href="https://sukovsky.com/tags/dev/">dev</a></li>
+            
+                    <li><a class="tag-link" href="https://sukovsky.com/tags/grumpy/">grumpy</a></li>
+            
+                    <li><a class="tag-link" href="https://sukovsky.com/tags/technical-debt/">technical debt</a></li>
+            
+            </ul>
+        </section>
+        
+    </article>
+   
+    </div>
+    </main>
+</div>
+        <footer>
+<div id="footer" class="container">
+<div class="grad-divider"></div>
+    <nav>
+        <div>2020  © Jozef Sukovsky. <a target="_blank" href="https://github.com/jozefsukovsky">Github</a>. <a target="_blank" href="https://twitter.com/jozefsukovsky">Twitter</a>. <a target="_blank" href="https://www.linkedin.com/in/jozefsukovsky/">Linkedin</a>. <a target="_blank" href="/index.xml">RSS</a>. </div>
+        <div><a target="_blank" href="https://github.com/jozefsukovsky/hugo-cyberton">Cyberton</a> theme on&nbsp;<a target="_blank" href="https://gohugo.io">Hugo</a>.</div>
+    </nav>
+</div>
+</footer></body>
+</html>
