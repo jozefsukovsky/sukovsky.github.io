@@ -10,10 +10,10 @@
     <lastBuildDate>Thu, 27 May 2021 20:20:00 +0000</lastBuildDate><atom:link href="https://sukovsky.com/tags/flask/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Django user trying out FastAPI</title>
-      <link>https://sukovsky.com/posts/4-from-django-to-fastapi/</link>
+      <link>https://sukovsky.com/posts/4-django-user-trying-out-fastapi/</link>
       <pubDate>Thu, 27 May 2021 20:20:00 +0000</pubDate>
       
-      <guid>https://sukovsky.com/posts/4-from-django-to-fastapi/</guid>
+      <guid>https://sukovsky.com/posts/4-django-user-trying-out-fastapi/</guid>
       <description>Django was my first choice for many years. But building new API-driven products using Django and Django REST Framework never brought that pleasing feeling I would like to feel.
 The Good, the Bad and the Ugly It&amp;rsquo;s been around 2007 I stumbled upon Django framework. Needed to build a very simple image gallery, nothing serious. And since then, every time I had to do something to be displayed on the web, Django was my first choice.</description>
     </item>
