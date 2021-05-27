@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Django user trying out FastAPI - Jozef Sukovsky</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	    
+    <meta name="twitter:card" content="Django user trying out FastAPI" />
+    <meta name="twitter:creator" content="@jozefsukovsky"/>
+    <meta property="og:url" content="https://sukovsky.com/posts/4-from-django-to-fastapi/" />
+    <meta property="og:title" content="Django user trying out FastAPI" />
+    <meta property="og:description" content="Django user trying out FastAPI" />
+	<link rel="stylesheet" type="text/css" media="screen" href="https://sukovsky.com/css/normalize.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="https://sukovsky.com/css/syntax.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="https://sukovsky.com/css/cyberton.css" />
+</head><body><div class="grad-divider">
+<header>
+<div id="header" class="container">
+    <div class="branding">
+        <h1 class="site-title"><a href="https://sukovsky.com/">Jozef Sukovsky</a></h1>
+        <div class="site-copy">
+            My personal blog. Read it, now!
+            </div>
+    </div>
+    <input type="checkbox" id="res-nav">
+    <label for="res-nav"><div></div><div></div><div></div></label>
+    <nav id="main-nav">
+        <ul>
+            <li>
+				<a href="/">Home</a>
+			</li>
+			<li class="active">
+				<a href="/posts">Posts</a>
+			</li>
+			<li>
+				<a href="/about">About</a>
+			</li>
+			<li>
+				<a href="/tags">Tags</a>
+			</li>
+			</ul>
+    </nav>
+</div>
+</header><div id="content">
+        
+    <main>
+    <div id="content" class="container">
+    
+    <article>
+        <header>
+            <time datetime="2021-05-27 20:20:00 &#43;0000 &#43;0000">27 May 21 20:20 UTC</time><h1><a href="/posts/4-from-django-to-fastapi/">Django user trying out FastAPI</a></h1>
+        </header>
+        <section>
+        <p>Django was my first choice for many years. But building new API-driven products using Django and Django REST Framework never brought that pleasing feeling I would like to feel.</p>
+<h2 id="the-good-the-bad-and-the-ugly">The Good, the Bad and the Ugly</h2>
+<p>It&rsquo;s been around 2007 I stumbled upon <a href="https://www.djangoproject.com/">Django framework</a>. Needed to build a very simple image gallery, nothing serious. And since then, every time I had to do something to be displayed on the web, Django was my first choice. What was a big deal for me was it&rsquo;s ORM, <code>contrib.auth</code> and <code>contrib.admin</code>. Going up with and running in minutes, having some database models done really fast and being able to fill the tables with some test data right away was always a pleasing experience.</p>
+<p>As time fled, things started to change. <a href="https://en.wikipedia.org/wiki/Ajax_(programming)">AJAX</a>, <a href="https://en.wikipedia.org/wiki/Unobtrusive_JavaScript">Unobtrusive JavaScript</a>, first <a href="https://en.wikipedia.org/wiki/Single-page_application">Single-page applications</a> been gaining popularity, until we arrived at the destination <a href="https://nodejs.org/en/">node.js</a> as a daily bread. What caused APIs to be the more and more popular choice not only for consumer apps but for almost everything. For many products, going SPA is a good choice, no matter it still runs on the same JavaScript and all its ugliness is just abstracted with multiple levels on top of it.</p>
+<p>So, where it made sense, we were doing simple JSON responses instead of rich Django views, and then this <a href="https://www.django-rest-framework.org/">Django REST framework</a> (DRF) happened. It suddenly brought a &ldquo;djangish&rdquo; solution to complex API apps and we could start migrating existing HTML apps to API-driven experiences.</p>
+<p>But, does it make sense to build a new, greenfield product using Django and DRF? Suddenly, what we do use more or less, is it&rsquo;s ORM, contrib.auth and contrib.admin. And for the rest, we use DRF. And we hold a huge framework doing mostly nothing, having now two frameworks. Such an approach does feel a bit odd.</p>
+<h2 id="exploring-alternatives">Exploring alternatives</h2>
+<p>I defined some rough expectations. In my case it was: being small/minimal (right, the opposite of Django), still having support for middleware if needed, good to have some schematic approach (OpenAPI), having something like CRUD tooling and/or content management, serving fast simple responses, having some authentication/authorization around. What made me google a lot. TL; DR: I didn&rsquo;t find a 1:1 replacement, but I did find a solution which made me happy.</p>
+<h3 id="obvious-one">Obvious one</h3>
+<p>There are these obvious choices, like <a href="https://flask.palletsprojects.com/en/1.1.x/">Flask</a> with <a href="https://www.sqlalchemy.org/">SQLAlchemy</a> and/or <a href="https://flask-admin.readthedocs.io/en/latest/">Flask-Admin</a> and/or <a href="https://flask-restful.readthedocs.io/en/latest/">Flask-RESTful</a>. I&rsquo;ve been listening about Flask for years. People around me were always telling me this is the best Django replacement if you want to work with something smaller without all that swiss-knife equipment. I believe it. So I decided to not try it out, because I already considered it a good choice.</p>
+<h3 id="less-obvious-one">Less obvious one</h3>
+<p>There are less obvious choices, like the <a href="https://falcon.readthedocs.io/en/stable/">Falcon Web Framework</a>. I would use it any time while building something quite low-level. It looks like there is a nice falcon-autocrud app which works with SQLAlchemy. What I didn&rsquo;t like was the release attitude having plenty release candidates. There is this <a href="https://www.hug.rest/">hug</a> built on top of Falcon. What could be a good path to explore. However, I skipped it at this point.</p>
+<h3 id="new-kids-on-the-block">New kids on the block</h3>
+<p>And then, there are these new kids on the block. Frameworks running with <a href="https://docs.python.org/3/library/asyncio.html">asyncio</a>. Didn&rsquo;t take too much time to consider <a href="https://sanicframework.org/">Sanic</a> and <a href="https://fastapi.tiangolo.com/">FastAPI</a>. However, I decided to try out only one. It was FastAPI. And that&rsquo;s the one, which made me write this article.</p>
+<h3 id="fastapi">FastAPI</h3>
+<p>Coming from Django, it was a bit weird for me at first. I didn&rsquo;t expect small frameworks having all stuff loaded. So was interested in combining different libs, or either using some extensions. FastAPI even suggests many approaches and tools in their rich documentation. They don&rsquo;t try to attach/inherit everything, they just give suggestions to &ldquo;goes well along&rdquo; libraries. Like the uvicorn to run the app, Pydantic for managing validation and config. SQLAlchemy if people need ORM, databases to do low-level SQL and such. And yep, did I mention rich documentation?</p>
+<p>It doesn&rsquo;t exactly meet my requirements of having crud/content management tool/library available. But still, it is my winner.</p>
+<h2 id="side-by-side-example-in-drf-vs-fastapi">Side by side example in DRF vs FastAPI</h2>
+<p>To understand the differences, one of the ways how to migrate, it is best to just try something real.</p>
+<p>For this purpose, I will create over-simplistic library app containing <code>Author</code> and <code>Book</code> models. I won&rsquo;t go into Django details, just expecting Django experience by readers.</p>
+<h2 id="starting-a-new-project">Starting a new project</h2>
+<h3 id="django">Django</h3>
+<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="n">mkdir</span> <span class="n">drf_bookapp</span>
+<span class="n">cd</span> <span class="n">drf_bookapp</span>
+<span class="n">python3</span><span class="o">.</span><span class="mi">8</span> <span class="o">-</span><span class="n">m</span> <span class="n">venv</span> <span class="n">env</span>
+<span class="n">source</span> <span class="n">env</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">activate</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="n">djangorestframework</span> <span class="n">psycopg2</span>
+<span class="n">django</span><span class="o">-</span><span class="n">admin</span> <span class="n">startproject</span> <span class="n">drf_bookapp</span> <span class="o">.</span>
+<span class="o">./</span><span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">startapp</span> <span class="n">library</span>
+</code></pre></div><p><code>library/models.py</code>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+
+
+<span class="k">class</span> <span class="nc">Author</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">first_name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
+    <span class="n">last_name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
+    <span class="n">bio</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">f</span><span class="s1">&#39;{self.first_name} {self.last_name}&#39;</span>
+
+
+<span class="k">class</span> <span class="nc">Book</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
+    <span class="n">description</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">()</span>
+    <span class="n">authors</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ManyToManyField</span><span class="p">(</span><span class="n">Author</span><span class="p">)</span>
+    <span class="n">published</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">title</span>
+
+</code></pre></div><p>Editing <code>drf_bookapp/settings.py</code> and adding two lines into <code>INSTALLED_APPS</code>, make it look like:</p>
+<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="n">INSTALLED_APPS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;django.contrib.auth&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.contenttypes&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.sessions&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.staticfiles&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;rest_framework&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;library&#39;</span><span class="p">,</span>
+<span class="p">]</span>
+
+</code></pre></div><p>And also editing <code>DATABASES</code> settings:</p>
+<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="n">DATABASES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;default&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;ENGINE&#39;</span><span class="p">:</span> <span class="s1">&#39;django.db.backends.postgresql&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;HOST&#39;</span><span class="p">:</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;NAME&#39;</span><span class="p">:</span> <span class="s1">&#39;library_drf&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;USER&#39;</span><span class="p">:</span> <span class="s1">&#39;postgres&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;PASSWORD&#39;</span><span class="p">:</span> <span class="s1">&#39;password&#39;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+</code></pre></div><p>Making migration:</p>
+<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="o">./</span><span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">makemigrations</span>
+<span class="n">Migrations</span> <span class="k">for</span> <span class="s1">&#39;library&#39;</span><span class="p">:</span>
+  <span class="n">library</span><span class="o">/</span><span class="n">migrations</span><span class="o">/</span><span class="mo">0001</span><span class="n">_initial</span><span class="o">.</span><span class="n">py</span>
+    <span class="o">-</span> <span class="n">Create</span> <span class="n">model</span> <span class="n">Author</span>
+    <span class="o">-</span> <span class="n">Create</span> <span class="n">model</span> <span class="n">Book</span>
+</code></pre></div><p>And migrating:</p>
+<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="n">Operations</span> <span class="n">to</span> <span class="n">perform</span><span class="p">:</span>
+  <span class="n">Apply</span> <span class="nb">all</span> <span class="n">migrations</span><span class="p">:</span> <span class="n">auth</span><span class="p">,</span> <span class="n">contenttypes</span><span class="p">,</span> <span class="n">library</span><span class="p">,</span> <span class="n">sessions</span>
+<span class="n">Running</span> <span class="n">migrations</span><span class="p">:</span>
+  <span class="n">Applying</span> <span class="n">contenttypes</span><span class="o">.</span><span class="mo">0001</span><span class="n">_initial</span><span class="o">...</span> <span class="n">OK</span>
+  <span class="n">Applying</span> <span class="n">contenttypes</span><span class="o">.</span><span class="mo">0002</span><span class="n">_remove_content_type_name</span><span class="o">...</span> <span class="n">OK</span>
+  <span class="n">Applying</span> <span class="n">auth</span><span class="o">.</span><span class="mo">0001</span><span class="n">_initial</span><span class="o">...</span> <span class="n">OK</span>
+  <span class="n">Applying</span> <span class="n">auth</span><span class="o">.</span><span class="mo">0002</span><span class="n">_alter_permission_name_max_length</span><span class="o">...</span> <span class="n">OK</span>
+  <span class="n">Applying</span> <span class="n">auth</span><span class="o">.</span><span class="mo">0003</span><span class="n">_alter_user_email_max_length</span><span class="o">...</span> <span class="n">OK</span>
+  <span class="n">Applying</span> <span class="n">auth</span><span class="o">.</span><span class="mo">0004</span><span class="n">_alter_user_username_opts</span><span class="o">...</span> <span class="n">OK</span>
+  <span class="n">Applying</span> <span class="n">auth</span><span class="o">.</span><span class="mo">0005</span><span class="n">_alter_user_last_login_null</span><span class="o">...</span> <span class="n">OK</span>
+  <span class="n">Applying</span> <span class="n">auth</span><span class="o">.</span><span class="mo">0006</span><span class="n">_require_contenttypes_0002</span><span class="o">...</span> <span class="n">OK</span>
+  <span class="n">Applying</span> <span class="n">auth</span><span class="o">.</span><span class="mo">0007</span><span class="n">_alter_validators_add_error_messages</span><span class="o">...</span> <span class="n">OK</span>
+  <span class="n">Applying</span> <span class="n">auth</span><span class="o">.</span><span class="mo">000</span><span class="mi">8_</span><span class="n">alter_user_username_max_length</span><span class="o">...</span> <span class="n">OK</span>
+  <span class="n">Applying</span> <span class="n">auth</span><span class="o">.</span><span class="mo">000</span><span class="mi">9_</span><span class="n">alter_user_last_name_max_length</span><span class="o">...</span> <span class="n">OK</span>
+  <span class="n">Applying</span> <span class="n">auth</span><span class="o">.</span><span class="mo">0010</span><span class="n">_alter_group_name_max_length</span><span class="o">...</span> <span class="n">OK</span>
+  <span class="n">Applying</span> <span class="n">auth</span><span class="o">.</span><span class="mo">0011</span><span class="n">_update_proxy_permissions</span><span class="o">...</span> <span class="n">OK</span>
+  <span class="n">Applying</span> <span class="n">auth</span><span class="o">.</span><span class="mo">0012</span><span class="n">_alter_user_first_name_max_length</span><span class="o">...</span> <span class="n">OK</span>
+  <span class="n">Applying</span> <span class="n">library</span><span class="o">.</span><span class="mo">0001</span><span class="n">_initial</span><span class="o">...</span> <span class="n">OK</span>
+  <span class="n">Applying</span> <span class="n">sessions</span><span class="o">.</span><span class="mo">0001</span><span class="n">_initial</span><span class="o">...</span> <span class="n">OK</span>
+
+</code></pre></div><p>Now, we will do just a simple serializer, creating <code>library/serializers.py</code>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">rest_framework</span> <span class="kn">import</span> <span class="n">serializers</span>
+
+<span class="kn">from</span> <span class="nn">library.models</span> <span class="kn">import</span> <span class="n">Author</span><span class="p">,</span> <span class="n">Book</span>
+
+
+<span class="k">class</span> <span class="nc">AuthorSerializer</span><span class="p">(</span><span class="n">serializers</span><span class="o">.</span><span class="n">ModelSerializer</span><span class="p">):</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">Author</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="s1">&#39;__all__&#39;</span>
+
+
+<span class="k">class</span> <span class="nc">BookSerializer</span><span class="p">(</span><span class="n">serializers</span><span class="o">.</span><span class="n">ModelSerializer</span><span class="p">):</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">Book</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="s1">&#39;__all__&#39;</span>
+
+
+</code></pre></div><p>and <code>library/views.py</code>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">rest_framework</span> <span class="kn">import</span> <span class="n">viewsets</span>
+
+<span class="kn">from</span> <span class="nn">library.models</span> <span class="kn">import</span> <span class="n">Author</span><span class="p">,</span> <span class="n">Book</span>
+<span class="kn">from</span> <span class="nn">library.serializers</span> <span class="kn">import</span> <span class="n">AuthorSerializer</span><span class="p">,</span> <span class="n">BookSerializer</span>
+
+
+<span class="k">class</span> <span class="nc">AuthorViewSet</span><span class="p">(</span><span class="n">viewsets</span><span class="o">.</span><span class="n">ModelViewSet</span><span class="p">):</span>
+
+    <span class="n">queryset</span> <span class="o">=</span> <span class="n">Author</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="n">serializer_class</span> <span class="o">=</span> <span class="n">AuthorSerializer</span>
+
+
+<span class="k">class</span> <span class="nc">BookViewSet</span><span class="p">(</span><span class="n">viewsets</span><span class="o">.</span><span class="n">ModelViewSet</span><span class="p">):</span>
+
+    <span class="n">queryset</span> <span class="o">=</span> <span class="n">Book</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="n">serializer_class</span> <span class="o">=</span> <span class="n">BookSerializer</span>
+
+</code></pre></div><p>Finally, updating <code>drf_bookapp/urls.py</code> to look like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">django.contrib</span> <span class="kn">import</span> <span class="n">admin</span>
+<span class="kn">from</span> <span class="nn">django.urls</span> <span class="kn">import</span> <span class="n">path</span><span class="p">,</span> <span class="n">include</span>
+
+<span class="kn">from</span> <span class="nn">rest_framework.routers</span> <span class="kn">import</span> <span class="n">DefaultRouter</span>
+
+<span class="kn">from</span> <span class="nn">library.views</span> <span class="kn">import</span> <span class="n">AuthorViewSet</span><span class="p">,</span> <span class="n">BookViewSet</span>
+
+<span class="n">router</span> <span class="o">=</span> <span class="n">DefaultRouter</span><span class="p">()</span>
+
+<span class="n">router</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s1">&#39;authors&#39;</span><span class="p">,</span> <span class="n">AuthorViewSet</span><span class="p">)</span>
+<span class="n">router</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s1">&#39;books&#39;</span><span class="p">,</span> <span class="n">BookViewSet</span><span class="p">)</span>
+
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">include</span><span class="p">(</span><span class="n">router</span><span class="o">.</span><span class="n">urls</span><span class="p">)),</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;api-auth/&#39;</span><span class="p">,</span> <span class="n">include</span><span class="p">(</span><span class="s1">&#39;rest_framework.urls&#39;</span><span class="p">)),</span>
+<span class="p">]</span>
+
+</code></pre></div><p>After starting the server with</p>
+<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="o">./</span><span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">runserver</span>
+</code></pre></div><p>We should see something like:
+<img src="/image/004/01_drf-api.png" alt="DRF API"></p>
+<h3 id="fastapi-1">FastAPI</h3>
+<p>Now, achieving similar in FastAPI</p>
+<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="n">mkdir</span> <span class="n">fastapi_bookapp</span>
+<span class="n">cd</span> <span class="n">fastapi_bookapp</span>
+<span class="n">python3</span><span class="o">.</span><span class="mi">8</span> <span class="o">-</span><span class="n">m</span> <span class="n">venv</span> <span class="n">env</span>
+<span class="n">source</span> <span class="n">env</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">activate</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="n">asyncpg</span> <span class="n">fastapi</span> <span class="n">uvicorn</span> <span class="n">sqlalchemy</span><span class="o">==</span><span class="mf">1.4</span><span class="o">.</span><span class="mi">15</span> <span class="n">alembic</span><span class="o">==</span><span class="mf">1.5</span><span class="o">.</span><span class="mi">8</span> <span class="n">python</span><span class="o">-</span><span class="n">dotenv</span>
+</code></pre></div><p>Note: asyncio support in SQLAlchemy is quite fresh, starting from 1.4. Authors consider it &ldquo;alpha&rdquo;. It may be me, or there is still some issue here and there, especially working with relationships caused by lazy loading. It may also lack asyncio support for some other database engines. Some people may still prefer synchronous approach even in FastAPI.</p>
+<p>Assuming we have a postgres database named <code>library_fastapi</code>, we create <code>.env</code>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">DB_URL = &#39;postgresql+asyncpg://postgres:password@localhost:5432/library_fastapi&#39;
+</code></pre></div><p>then, <code>database.py</code>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">dotenv</span> <span class="kn">import</span> <span class="n">load_dotenv</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.ext.asyncio</span> <span class="kn">import</span> <span class="n">create_async_engine</span><span class="p">,</span> <span class="n">AsyncSession</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.ext.declarative</span> <span class="kn">import</span> <span class="n">declarative_base</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">sessionmaker</span>
+
+
+<span class="n">load_dotenv</span><span class="p">(</span><span class="s1">&#39;.env&#39;</span><span class="p">)</span>
+<span class="n">Base</span> <span class="o">=</span> <span class="n">declarative_base</span><span class="p">()</span>
+
+<span class="n">engine</span> <span class="o">=</span> <span class="n">create_async_engine</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;DB_URL&#39;</span><span class="p">],</span> <span class="n">echo</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">SessionLocal</span> <span class="o">=</span> <span class="n">sessionmaker</span><span class="p">(</span>
+    <span class="n">autocommit</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">autoflush</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">bind</span><span class="o">=</span><span class="n">engine</span><span class="p">,</span> <span class="n">class_</span><span class="o">=</span><span class="n">AsyncSession</span><span class="p">)</span>
+
+
+<span class="n">async</span> <span class="k">def</span> <span class="nf">get_db</span><span class="p">():</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="n">SessionLocal</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">db</span>
+    <span class="k">finally</span><span class="p">:</span>
+       <span class="n">await</span> <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+</code></pre></div><p>Next are models, <code>library/models.py</code>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">Column</span><span class="p">,</span> <span class="n">DateTime</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">String</span><span class="p">,</span> <span class="n">Table</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">relationship</span>
+
+<span class="kn">from</span> <span class="nn">database</span> <span class="kn">import</span> <span class="n">Base</span>
+
+
+<span class="n">book_authors</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="s1">&#39;library_book_authors&#39;</span><span class="p">,</span> <span class="n">Base</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+    <span class="n">Column</span><span class="p">(</span><span class="s1">&#39;author_id&#39;</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;library_author.id&#39;</span><span class="p">)),</span>
+    <span class="n">Column</span><span class="p">(</span><span class="s1">&#39;book_id&#39;</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;library_book.id&#39;</span><span class="p">))</span>
+<span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Author</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;library_author&#39;</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">first_name</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">32</span><span class="p">))</span>
+    <span class="n">last_name</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">32</span><span class="p">))</span>
+    <span class="n">bio</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">)</span>
+    <span class="n">books</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span><span class="s1">&#39;Book&#39;</span><span class="p">,</span> <span class="n">secondary</span><span class="o">=</span><span class="n">book_authors</span><span class="p">,</span> <span class="n">back_populates</span><span class="o">=</span><span class="s1">&#39;authors&#39;</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Book</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;library_book&#39;</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">128</span><span class="p">))</span>
+    <span class="n">description</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">)</span>
+    <span class="n">published</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">DateTime</span><span class="p">(</span><span class="n">timezone</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
+    <span class="n">authors</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span><span class="s1">&#39;Author&#39;</span><span class="p">,</span> <span class="n">secondary</span><span class="o">=</span><span class="n">book_authors</span><span class="p">,</span> <span class="n">back_populates</span><span class="o">=</span><span class="s1">&#39;books&#39;</span><span class="p">)</span>
+
+</code></pre></div><p>And, we set up migrations:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">alembic init -t async alembic
+
+</code></pre></div><p>Now, we need to edit <code>alembic.ini</code> where we edit the following line: <code>sqlalchemy.url = </code> - like this, to be empty.</p>
+<p>Instead, we modify the beginning of the file <code>alembic/env.py</code>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">from</span> <span class="nn">logging.config</span> <span class="kn">import</span> <span class="n">fileConfig</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">engine_from_config</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">pool</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.ext.asyncio</span> <span class="kn">import</span> <span class="n">AsyncEngine</span>
+
+<span class="kn">from</span> <span class="nn">alembic</span> <span class="kn">import</span> <span class="n">context</span>
+<span class="kn">from</span> <span class="nn">dotenv</span> <span class="kn">import</span> <span class="n">load_dotenv</span>
+
+<span class="kn">from</span> <span class="nn">database</span> <span class="kn">import</span> <span class="n">Base</span>
+<span class="kn">from</span> <span class="nn">library</span> <span class="kn">import</span> <span class="n">models</span>
+<span class="c1"># this is the Alembic Config object, which provides</span>
+<span class="c1"># access to the values within the .ini file in use.</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">config</span>
+
+<span class="n">load_dotenv</span><span class="p">(</span><span class="s1">&#39;.env&#39;</span><span class="p">)</span>
+<span class="n">config</span><span class="o">.</span><span class="n">set_main_option</span><span class="p">(</span><span class="s1">&#39;sqlalchemy.url&#39;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;DB_URL&#39;</span><span class="p">])</span>
+
+<span class="c1"># Interpret the config file for Python logging.</span>
+<span class="c1"># This line sets up loggers basically.</span>
+<span class="n">fileConfig</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">config_file_name</span><span class="p">)</span>
+
+<span class="c1"># add your model&#39;s MetaData object here</span>
+<span class="c1"># for &#39;autogenerate&#39; support</span>
+<span class="c1"># from myapp import mymodel</span>
+<span class="c1"># target_metadata = mymodel.Base.metadata</span>
+<span class="n">target_metadata</span> <span class="o">=</span> <span class="n">Base</span><span class="o">.</span><span class="n">metadata</span>
+
+<span class="c1"># other values from the config, defined by the needs of env.py,</span>
+<span class="c1"># can be acquired:</span>
+<span class="c1"># my_important_option = config.get_main_option(&#34;my_important_option&#34;)</span>
+<span class="c1"># ... etc.</span>
+
+
+<span class="k">def</span> <span class="nf">run_migrations_offline</span><span class="p">():</span>
+<span class="c1">### =============== JUST CONTINUE REST OF THE FAIL AS IS =============== ###</span>
+</code></pre></div><p>Finally:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">PYTHONPATH=&#34;.&#34; alembic revision --autogenerate -m &#34;initial&#34;
+PYTHONPATH=&#34;.&#34; alembic upgrade head
+</code></pre></div><p>Remaining is schema , database operations and views. For the sake of this example, we will continue organizing code in a way similar to Django apps. We will need <code>library/views.py</code> and <code>library/schema.py</code> and we will also add <code>library/crud.py</code>.</p>
+<p>the <code>library/schema.py</code>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
+
+
+<span class="k">class</span> <span class="nc">BaseOrmModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+        <span class="n">orm_mode</span> <span class="o">=</span> <span class="bp">True</span>
+
+
+<span class="k">class</span> <span class="nc">CreateAuthor</span><span class="p">(</span><span class="n">BaseOrmModel</span><span class="p">):</span>
+    <span class="n">first_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
+    <span class="n">last_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
+    <span class="n">bio</span><span class="p">:</span> <span class="nb">str</span>
+
+
+<span class="k">class</span> <span class="nc">ReadAuthor</span><span class="p">(</span><span class="n">CreateAuthor</span><span class="p">):</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span>
+
+
+<span class="k">class</span> <span class="nc">AuthorsList</span><span class="p">(</span><span class="n">BaseOrmModel</span><span class="p">):</span>
+    <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ReadAuthor</span><span class="p">]</span>
+
+
+<span class="k">class</span> <span class="nc">CreateBook</span><span class="p">(</span><span class="n">BaseOrmModel</span><span class="p">):</span>
+    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
+    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">published</span><span class="p">:</span> <span class="n">datetime</span>
+    <span class="n">authors</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+
+
+<span class="k">class</span> <span class="nc">ReadBook</span><span class="p">(</span><span class="n">CreateBook</span><span class="p">):</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">authors</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">ReadAuthor</span><span class="p">]]</span>
+
+
+<span class="k">class</span> <span class="nc">BooksList</span><span class="p">(</span><span class="n">BaseOrmModel</span><span class="p">):</span>
+    <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ReadBook</span><span class="p">]</span>
+
+</code></pre></div><p>The <code>library/crud.py</code>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">select</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">Session</span><span class="p">,</span> <span class="n">selectinload</span>
+
+<span class="kn">from</span> <span class="nn">library</span> <span class="kn">import</span> <span class="n">schema</span>
+<span class="kn">from</span> <span class="nn">library.models</span> <span class="kn">import</span> <span class="n">Author</span><span class="p">,</span> <span class="n">Book</span>
+
+
+<span class="n">async</span> <span class="k">def</span> <span class="nf">create_author</span><span class="p">(</span><span class="n">db</span><span class="p">:</span> <span class="n">Session</span><span class="p">,</span> <span class="n">author</span><span class="p">:</span> <span class="n">schema</span><span class="o">.</span><span class="n">CreateAuthor</span><span class="p">):</span>
+    <span class="n">db_author</span> <span class="o">=</span> <span class="n">Author</span><span class="p">(</span><span class="o">**</span><span class="n">author</span><span class="o">.</span><span class="n">dict</span><span class="p">())</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">db_author</span><span class="p">)</span>
+    <span class="n">await</span> <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+    <span class="n">await</span> <span class="n">db</span><span class="o">.</span><span class="n">refresh</span><span class="p">(</span><span class="n">db_author</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">db_author</span>
+
+
+<span class="n">async</span> <span class="k">def</span> <span class="nf">find_author</span><span class="p">(</span><span class="n">db</span><span class="p">:</span> <span class="n">Session</span><span class="p">,</span> <span class="n">author_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Author</span><span class="p">,</span> <span class="bp">None</span><span class="p">]:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">await</span> <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">Author</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">Author</span><span class="o">.</span><span class="n">id</span><span class="o">==</span><span class="n">author_id</span><span class="p">))</span>
+    <span class="n">db_author</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">one_or_none</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">db_author</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">db_author</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="bp">None</span>
+
+
+<span class="n">async</span> <span class="k">def</span> <span class="nf">list_authors</span><span class="p">(</span><span class="n">db</span><span class="p">:</span> <span class="n">Session</span><span class="p">):</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">await</span> <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">Author</span><span class="p">))</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">all</span><span class="p">()]</span>
+
+
+<span class="n">async</span> <span class="k">def</span> <span class="nf">find_book</span><span class="p">(</span><span class="n">db</span><span class="p">:</span> <span class="n">Session</span><span class="p">,</span> <span class="n">book_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Book</span><span class="p">,</span> <span class="bp">None</span><span class="p">]:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">await</span> <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+        <span class="n">select</span><span class="p">(</span><span class="n">Book</span><span class="p">)</span><span class="o">.</span><span class="n">options</span><span class="p">(</span><span class="n">selectinload</span><span class="p">(</span>
+            <span class="n">Book</span><span class="o">.</span><span class="n">authors</span><span class="p">))</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">Book</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">book_id</span><span class="p">))</span>
+    <span class="n">db_book</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">one_or_none</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">db_book</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">db_book</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="bp">None</span>
+
+
+<span class="n">async</span> <span class="k">def</span> <span class="nf">list_books</span><span class="p">(</span><span class="n">db</span><span class="p">:</span> <span class="n">Session</span><span class="p">):</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">await</span> <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">Book</span><span class="p">)</span><span class="o">.</span><span class="n">options</span><span class="p">(</span><span class="n">selectinload</span><span class="p">(</span><span class="n">Book</span><span class="o">.</span><span class="n">authors</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">all</span><span class="p">()]</span>
+
+
+<span class="n">async</span> <span class="k">def</span> <span class="nf">create_book</span><span class="p">(</span><span class="n">db</span><span class="p">:</span> <span class="n">Session</span><span class="p">,</span> <span class="n">book</span><span class="p">:</span> <span class="n">schema</span><span class="o">.</span><span class="n">CreateBook</span><span class="p">):</span>
+    <span class="n">book_dict</span> <span class="o">=</span> <span class="n">book</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
+    <span class="n">author_ids</span> <span class="o">=</span> <span class="n">book_dict</span><span class="p">[</span><span class="s1">&#39;authors&#39;</span><span class="p">]</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">await</span> <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">Author</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">Author</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">in_</span><span class="p">(</span><span class="n">author_ids</span><span class="p">)))</span>
+    <span class="n">authors</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">all</span><span class="p">()]</span>
+    <span class="n">found_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">authors</span><span class="p">]</span>
+    <span class="n">wrong_ids</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">author_ids</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">found_ids</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">wrong_ids</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;The following author IDs are invalid: {wrong_ids}&#39;</span><span class="p">)</span>
+
+    <span class="n">book_dict</span><span class="p">[</span><span class="s1">&#39;authors&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">authors</span>
+    <span class="n">db_book</span> <span class="o">=</span> <span class="n">Book</span><span class="p">(</span><span class="o">**</span><span class="n">book_dict</span><span class="p">)</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">db_book</span><span class="p">)</span>
+    <span class="n">await</span> <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+    <span class="n">await</span> <span class="n">db</span><span class="o">.</span><span class="n">refresh</span><span class="p">(</span><span class="n">db_book</span><span class="p">)</span>
+    <span class="c1"># TODO: seems returning the refreshed object causes some troubles in lazy loading of authors</span>
+    <span class="c1"># thus replacing for now with query</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">await</span> <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+        <span class="n">select</span><span class="p">(</span><span class="n">Book</span><span class="p">)</span><span class="o">.</span><span class="n">options</span><span class="p">(</span><span class="n">selectinload</span><span class="p">(</span>
+            <span class="n">Book</span><span class="o">.</span><span class="n">authors</span><span class="p">))</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">db_book</span><span class="o">.</span><span class="n">id</span><span class="p">))</span>
+    <span class="n">db_book</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">one_or_none</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">db_book</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">db_book</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="bp">None</span>
+
+</code></pre></div><p>And the <code>library/views.py</code>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">fastapi</span> <span class="kn">import</span> <span class="n">APIRouter</span><span class="p">,</span> <span class="n">Depends</span><span class="p">,</span> <span class="n">HTTPException</span><span class="p">,</span> <span class="n">status</span>
+<span class="kn">from</span> <span class="nn">fastapi.encoders</span> <span class="kn">import</span> <span class="n">jsonable_encoder</span>
+<span class="kn">from</span> <span class="nn">fastapi.responses</span> <span class="kn">import</span> <span class="n">JSONResponse</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">Session</span>
+
+<span class="kn">from</span> <span class="nn">database</span> <span class="kn">import</span> <span class="n">get_db</span>
+<span class="kn">from</span> <span class="nn">library</span> <span class="kn">import</span> <span class="n">crud</span>
+<span class="kn">from</span> <span class="nn">library.schema</span> <span class="kn">import</span> <span class="n">AuthorsList</span><span class="p">,</span> <span class="n">CreateAuthor</span><span class="p">,</span> <span class="n">ReadAuthor</span><span class="p">,</span> <span class="n">BooksList</span><span class="p">,</span> <span class="n">CreateBook</span><span class="p">,</span> <span class="n">ReadBook</span>
+
+
+<span class="k">class</span> <span class="nc">ItemNotFoundException</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_404_NOT_FOUND</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s1">&#39;Item not found&#39;</span><span class="p">)</span>
+
+
+<span class="n">authors_router</span> <span class="o">=</span> <span class="n">APIRouter</span><span class="p">(</span>
+    <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;/authors&#39;</span><span class="p">,</span>
+    <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;authors&#39;</span><span class="p">]</span>
+<span class="p">)</span>
+
+
+<span class="n">books_router</span> <span class="o">=</span> <span class="n">APIRouter</span><span class="p">(</span>
+    <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;/books&#39;</span><span class="p">,</span>
+    <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;books&#39;</span><span class="p">]</span>
+<span class="p">)</span>
+
+
+<span class="nd">@authors_router.get</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">response_model</span><span class="o">=</span><span class="n">AuthorsList</span><span class="p">)</span>
+<span class="n">async</span> <span class="k">def</span> <span class="nf">get_authors</span><span class="p">(</span><span class="n">db</span><span class="p">:</span> <span class="n">Session</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_db</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="n">AuthorsList</span><span class="p">:</span>
+    <span class="n">authors</span> <span class="o">=</span> <span class="n">await</span> <span class="n">crud</span><span class="o">.</span><span class="n">list_authors</span><span class="p">(</span><span class="n">db</span><span class="p">)</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="n">ReadAuthor</span><span class="o">.</span><span class="n">from_orm</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">authors</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">AuthorsList</span><span class="p">(</span><span class="n">results</span><span class="o">=</span><span class="n">results</span><span class="p">)</span>
+
+
+<span class="nd">@authors_router.post</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">response_model</span><span class="o">=</span><span class="n">ReadAuthor</span><span class="p">)</span>
+<span class="n">async</span> <span class="k">def</span> <span class="nf">post_author</span><span class="p">(</span><span class="n">author</span><span class="p">:</span> <span class="n">CreateAuthor</span><span class="p">,</span> <span class="n">db</span><span class="p">:</span> <span class="n">Session</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_db</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="n">ReadAuthor</span><span class="p">:</span>
+    <span class="n">db_author</span> <span class="o">=</span> <span class="n">await</span> <span class="n">crud</span><span class="o">.</span><span class="n">create_author</span><span class="p">(</span><span class="n">db</span><span class="o">=</span><span class="n">db</span><span class="p">,</span> <span class="n">author</span><span class="o">=</span><span class="n">author</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ReadAuthor</span><span class="o">.</span><span class="n">from_orm</span><span class="p">(</span><span class="n">db_author</span><span class="p">)</span>
+
+
+<span class="nd">@authors_router.get</span><span class="p">(</span><span class="s1">&#39;{author_id}&#39;</span><span class="p">,</span> <span class="n">response_model</span><span class="o">=</span><span class="n">ReadAuthor</span><span class="p">)</span>
+<span class="n">async</span> <span class="k">def</span> <span class="nf">get_author</span><span class="p">(</span><span class="n">author_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">db</span><span class="p">:</span> <span class="n">Session</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_db</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="n">ReadAuthor</span><span class="p">:</span>
+    <span class="n">db_author</span> <span class="o">=</span> <span class="n">await</span> <span class="n">crud</span><span class="o">.</span><span class="n">find_author</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">author_id</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">db_author</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">ItemNotFoundException</span>
+    <span class="k">return</span> <span class="n">ReadAuthor</span><span class="o">.</span><span class="n">from_orm</span><span class="p">(</span><span class="n">db_author</span><span class="p">)</span>
+
+
+<span class="nd">@books_router.get</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">response_model</span><span class="o">=</span><span class="n">BooksList</span><span class="p">)</span>
+<span class="n">async</span> <span class="k">def</span> <span class="nf">get_books</span><span class="p">(</span><span class="n">db</span><span class="p">:</span> <span class="n">Session</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_db</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="n">BooksList</span><span class="p">:</span>
+    <span class="n">books</span> <span class="o">=</span> <span class="n">await</span> <span class="n">crud</span><span class="o">.</span><span class="n">list_books</span><span class="p">(</span><span class="n">db</span><span class="p">)</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="n">ReadBook</span><span class="o">.</span><span class="n">from_orm</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">books</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">BooksList</span><span class="p">(</span><span class="n">results</span><span class="o">=</span><span class="n">results</span><span class="p">)</span>
+
+
+<span class="nd">@books_router.post</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">response_model</span><span class="o">=</span><span class="n">ReadBook</span><span class="p">)</span>
+<span class="n">async</span> <span class="k">def</span> <span class="nf">post_book</span><span class="p">(</span><span class="n">book</span><span class="p">:</span> <span class="n">CreateBook</span><span class="p">,</span> <span class="n">db</span><span class="p">:</span> <span class="n">Session</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_db</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="n">ReadBook</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">db_book</span> <span class="o">=</span> <span class="n">await</span> <span class="n">crud</span><span class="o">.</span><span class="n">create_book</span><span class="p">(</span><span class="n">db</span><span class="o">=</span><span class="n">db</span><span class="p">,</span> <span class="n">book</span><span class="o">=</span><span class="n">book</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">JSONResponse</span><span class="p">(</span>
+            <span class="n">status_code</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_422_UNPROCESSABLE_ENTITY</span><span class="p">,</span>
+            <span class="n">content</span><span class="o">=</span><span class="n">jsonable_encoder</span><span class="p">({</span><span class="s1">&#39;detail&#39;</span><span class="p">:</span> <span class="n">exc</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()}),)</span>
+    <span class="k">return</span> <span class="n">ReadBook</span><span class="o">.</span><span class="n">from_orm</span><span class="p">(</span><span class="n">db_book</span><span class="p">)</span>
+
+
+<span class="nd">@books_router.get</span><span class="p">(</span><span class="s1">&#39;{book_id}&#39;</span><span class="p">,</span> <span class="n">response_model</span><span class="o">=</span><span class="n">ReadBook</span><span class="p">)</span>
+<span class="n">async</span> <span class="k">def</span> <span class="nf">get_book</span><span class="p">(</span><span class="n">book_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">db</span><span class="p">:</span> <span class="n">Session</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_db</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="n">ReadBook</span><span class="p">:</span>
+    <span class="n">db_book</span> <span class="o">=</span> <span class="n">await</span> <span class="n">crud</span><span class="o">.</span><span class="n">find_book</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">book_id</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">db_book</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">ItemNotFoundException</span>
+    <span class="k">return</span> <span class="n">ReadBook</span><span class="o">.</span><span class="n">from_orm</span><span class="p">(</span><span class="n">db_book</span><span class="p">)</span>
+
+</code></pre></div><p>Finally, to make everything roll, we will need <code>main.py</code>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">fastapi</span> <span class="kn">import</span> <span class="n">FastAPI</span>
+
+<span class="kn">from</span> <span class="nn">library.views</span> <span class="kn">import</span> <span class="n">authors_router</span><span class="p">,</span> <span class="n">books_router</span>
+
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">(</span>
+    <span class="n">title</span><span class="o">=</span><span class="s1">&#39;SimpleLibraryApp&#39;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Example FastAPI Library App&#39;</span><span class="p">,</span>
+    <span class="n">openapi_tags</span><span class="o">=</span><span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;authors&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Authors&#39;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;books&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Books&#39;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+
+<span class="n">app</span><span class="o">.</span><span class="n">include_router</span><span class="p">(</span><span class="n">authors_router</span><span class="p">)</span>
+<span class="n">app</span><span class="o">.</span><span class="n">include_router</span><span class="p">(</span><span class="n">books_router</span><span class="p">)</span>
+
+</code></pre></div><p>And we will just start it up:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">uvicorn --port 8282 --reload main:app
+INFO:     Uvicorn running on http://127.0.0.1:8282 (Press CTRL+C to quit)
+INFO:     Started reloader process [26324] using statreload
+INFO:     Started server process [26326]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+
+</code></pre></div><p>Finally, opening http://localhost:8282/docs in browser will bring us something like <img src="/image/004/02_fastapi.png" alt="FastAPI"></p>
+<h2 id="conclusion">Conclusion</h2>
+<p>I did not find a 1:1 Django replacement. The most painful part is something similar to Django admin, if such feature is a product requirement. Choosing different approaches, there is a nice looking app called <a href="https://github.com/fastapi-admin/fastapi-admin">FastAPI Admin</a>. Which uses <a href="https://github.com/tortoise/tortoise-orm/">TortoiseORM</a> and is directly inspired by Django admin. Haven&rsquo;t tried yet.</p>
+
+        </section>
+        
+        
+        <section>
+            <h3>Tags</h3>
+            <ul class="tags">
+                
+                    <li><a class="tag-link" href="https://sukovsky.com/tags/django/">django</a></li>
+            
+                    <li><a class="tag-link" href="https://sukovsky.com/tags/fastapi/">fastapi</a></li>
+            
+                    <li><a class="tag-link" href="https://sukovsky.com/tags/python/">python</a></li>
+            
+                    <li><a class="tag-link" href="https://sukovsky.com/tags/falcon/">falcon</a></li>
+            
+                    <li><a class="tag-link" href="https://sukovsky.com/tags/sqlalchemy/">sqlalchemy</a></li>
+            
+                    <li><a class="tag-link" href="https://sukovsky.com/tags/flask/">flask</a></li>
+            
+                    <li><a class="tag-link" href="https://sukovsky.com/tags/hug/">hug</a></li>
+            
+                    <li><a class="tag-link" href="https://sukovsky.com/tags/pydantic/">pydantic</a></li>
+            
+            </ul>
+        </section>
+        
+    </article>
+   
+    </div>
+    </main>
+</div>
+        <footer>
+<div id="footer" class="container">
+<div class="grad-divider"></div>
+    <nav>
+        <div>2021  © Jozef Sukovsky. <a target="_blank" href="https://github.com/jozefsukovsky">Github</a>. <a target="_blank" href="https://twitter.com/jozefsukovsky">Twitter</a>. <a target="_blank" href="https://www.linkedin.com/in/jozefsukovsky/">Linkedin</a>. <a target="_blank" href="/index.xml">RSS</a>. </div>
+        <div><a target="_blank" href="https://github.com/jozefsukovsky/hugo-cyberton">Cyberton</a> theme on&nbsp;<a target="_blank" href="https://gohugo.io">Hugo</a>.</div>
+    </nav>
+</div>
+</footer></body>
+</html>

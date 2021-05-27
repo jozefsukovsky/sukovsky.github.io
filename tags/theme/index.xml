@@ -7,11 +7,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>© Jozef Sukovsky</copyright>
-    <lastBuildDate>Thu, 09 Jul 2020 02:12:00 +0000</lastBuildDate>
-    
-	<atom:link href="https://sukovsky.com/tags/theme/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Thu, 09 Jul 2020 02:12:00 +0000</lastBuildDate><atom:link href="https://sukovsky.com/tags/theme/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Cyberton theme</title>
       <link>https://sukovsky.com/posts/1-hugo-cyberton-theme/</link>

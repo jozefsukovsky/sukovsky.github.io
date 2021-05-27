@@ -151,6 +151,10 @@ article time {
     background: rgba(34, 105, 236, .2);
 }
 
+.container img {
+    max-width: 100%;
+}
+
 @media screen and (max-width: 768px) {
 
     .branding {

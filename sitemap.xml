@@ -1,93 +1,81 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
-  
   <url>
+    <loc>https://sukovsky.com/tags/django/</loc>
+    <lastmod>2021-05-27T20:20:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sukovsky.com/posts/4-from-django-to-fastapi/</loc>
+    <lastmod>2021-05-27T20:20:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sukovsky.com/tags/falcon/</loc>
+    <lastmod>2021-05-27T20:20:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sukovsky.com/tags/fastapi/</loc>
+    <lastmod>2021-05-27T20:20:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sukovsky.com/tags/flask/</loc>
+    <lastmod>2021-05-27T20:20:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sukovsky.com/tags/hug/</loc>
+    <lastmod>2021-05-27T20:20:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sukovsky.com/</loc>
+    <lastmod>2021-05-27T20:20:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sukovsky.com/posts/</loc>
+    <lastmod>2021-05-27T20:20:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sukovsky.com/tags/pydantic/</loc>
+    <lastmod>2021-05-27T20:20:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sukovsky.com/tags/python/</loc>
+    <lastmod>2021-05-27T20:20:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sukovsky.com/tags/sqlalchemy/</loc>
+    <lastmod>2021-05-27T20:20:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sukovsky.com/tags/</loc>
+    <lastmod>2021-05-27T20:20:00+00:00</lastmod>
+  </url><url>
     <loc>https://sukovsky.com/tags/dev/</loc>
     <lastmod>2020-10-04T17:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://sukovsky.com/tags/grumpy/</loc>
     <lastmod>2020-10-04T17:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://sukovsky.com/posts/</loc>
-    <lastmod>2020-10-04T17:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://sukovsky.com/tags/</loc>
-    <lastmod>2020-10-04T17:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://sukovsky.com/tags/technical-debt/</loc>
     <lastmod>2020-10-04T17:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://sukovsky.com/posts/3-tech-debt-will-eat-feet/</loc>
     <lastmod>2020-10-04T17:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://sukovsky.com/posts/2-about-python-imports/</loc>
     <lastmod>2020-09-01T14:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://sukovsky.com/tags/import/</loc>
     <lastmod>2020-09-01T14:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://sukovsky.com/tags/pep/</loc>
     <lastmod>2020-09-01T14:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://sukovsky.com/tags/python/</loc>
-    <lastmod>2020-09-01T14:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://sukovsky.com/tags/cyberton/</loc>
     <lastmod>2020-07-09T02:12:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://sukovsky.com/posts/1-hugo-cyberton-theme/</loc>
     <lastmod>2020-07-09T02:12:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://sukovsky.com/tags/hugo/</loc>
     <lastmod>2020-07-09T02:12:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://sukovsky.com/tags/theme/</loc>
     <lastmod>2020-07-09T02:12:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://sukovsky.com/about/</loc>
     <lastmod>2020-05-23T20:57:23+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://sukovsky.com/</loc>
-    <lastmod>2020-05-23T20:57:23+02:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://sukovsky.com/categories/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://sukovsky.com/series/</loc>
   </url>
-  
 </urlset>

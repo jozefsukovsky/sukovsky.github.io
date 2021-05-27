@@ -7,10 +7,78 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>© Jozef Sukovsky</copyright>
-    <lastBuildDate>Sun, 04 Oct 2020 17:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 27 May 2021 20:20:00 +0000</lastBuildDate><atom:link href="https://sukovsky.com/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>django</title>
+      <link>https://sukovsky.com/tags/django/</link>
+      <pubDate>Thu, 27 May 2021 20:20:00 +0000</pubDate>
+      
+      <guid>https://sukovsky.com/tags/django/</guid>
+      <description></description>
+    </item>
     
-	<atom:link href="https://sukovsky.com/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>falcon</title>
+      <link>https://sukovsky.com/tags/falcon/</link>
+      <pubDate>Thu, 27 May 2021 20:20:00 +0000</pubDate>
+      
+      <guid>https://sukovsky.com/tags/falcon/</guid>
+      <description></description>
+    </item>
     
+    <item>
+      <title>fastapi</title>
+      <link>https://sukovsky.com/tags/fastapi/</link>
+      <pubDate>Thu, 27 May 2021 20:20:00 +0000</pubDate>
+      
+      <guid>https://sukovsky.com/tags/fastapi/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>flask</title>
+      <link>https://sukovsky.com/tags/flask/</link>
+      <pubDate>Thu, 27 May 2021 20:20:00 +0000</pubDate>
+      
+      <guid>https://sukovsky.com/tags/flask/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>hug</title>
+      <link>https://sukovsky.com/tags/hug/</link>
+      <pubDate>Thu, 27 May 2021 20:20:00 +0000</pubDate>
+      
+      <guid>https://sukovsky.com/tags/hug/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>pydantic</title>
+      <link>https://sukovsky.com/tags/pydantic/</link>
+      <pubDate>Thu, 27 May 2021 20:20:00 +0000</pubDate>
+      
+      <guid>https://sukovsky.com/tags/pydantic/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>python</title>
+      <link>https://sukovsky.com/tags/python/</link>
+      <pubDate>Thu, 27 May 2021 20:20:00 +0000</pubDate>
+      
+      <guid>https://sukovsky.com/tags/python/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>sqlalchemy</title>
+      <link>https://sukovsky.com/tags/sqlalchemy/</link>
+      <pubDate>Thu, 27 May 2021 20:20:00 +0000</pubDate>
+      
+      <guid>https://sukovsky.com/tags/sqlalchemy/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>dev</title>
@@ -54,15 +122,6 @@
       <pubDate>Tue, 01 Sep 2020 14:00:00 +0000</pubDate>
       
       <guid>https://sukovsky.com/tags/pep/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>python</title>
-      <link>https://sukovsky.com/tags/python/</link>
-      <pubDate>Tue, 01 Sep 2020 14:00:00 +0000</pubDate>
-      
-      <guid>https://sukovsky.com/tags/python/</guid>
       <description></description>
     </item>
     

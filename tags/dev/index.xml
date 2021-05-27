@@ -7,11 +7,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>© Jozef Sukovsky</copyright>
-    <lastBuildDate>Sun, 04 Oct 2020 17:00:00 +0000</lastBuildDate>
-    
-	<atom:link href="https://sukovsky.com/tags/dev/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Sun, 04 Oct 2020 17:00:00 +0000</lastBuildDate><atom:link href="https://sukovsky.com/tags/dev/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Technical debt will eat your feet</title>
       <link>https://sukovsky.com/posts/3-tech-debt-will-eat-feet/</link>
