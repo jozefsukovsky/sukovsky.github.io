@@ -9,6 +9,17 @@
     <copyright>© Jozef Sukovsky</copyright>
     <lastBuildDate>Thu, 27 May 2021 20:20:00 +0000</lastBuildDate><atom:link href="https://sukovsky.com/index.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>About</title>
+      <link>https://sukovsky.com/about/</link>
+      <pubDate>Wed, 29 Dec 2021 20:45:00 +0100</pubDate>
+      
+      <guid>https://sukovsky.com/about/</guid>
+      <description>Hey, my name is Jozef. I &amp;ldquo;do the IT&amp;rdquo; for living, for over 19 years now. During these years, I&amp;rsquo;ve been a programmer, system administrator, system engineer, team lead, manager, top manager. Didn&amp;rsquo;t like it, started over as a Software Engineer.
+I write Python, Go and TypeScript. Back then, I was a Django guy, spent years working with AWS, Azure and Terraform and Ansible.
+Free-time activities During my free time I built otvorenyparlament.</description>
+    </item>
+    
+    <item>
       <title>Django user trying out FastAPI</title>
       <link>https://sukovsky.com/posts/4-django-user-trying-out-fastapi/</link>
       <pubDate>Thu, 27 May 2021 20:20:00 +0000</pubDate>
@@ -47,17 +58,6 @@ How this should be according to the theory Every other code editor or IDE has at
       <guid>https://sukovsky.com/posts/1-hugo-cyberton-theme/</guid>
       <description>Before I launched my website, I decided to make my life harder by creating an open-source Hugo theme. And the earth would stop rolling, if I hadn&amp;rsquo;t written this post about it.
 TL;DR This site uses Hugo. It is a static site generator written in Hugo. No dependency hell called node_modules. Many themes of various qualities can be found here. I was curious, how horrible it will be making my own.</description>
-    </item>
-    
-    <item>
-      <title>About</title>
-      <link>https://sukovsky.com/about/</link>
-      <pubDate>Sat, 23 May 2020 20:57:23 +0200</pubDate>
-      
-      <guid>https://sukovsky.com/about/</guid>
-      <description>Hey, my name is Jozef. I &amp;ldquo;do the IT&amp;rdquo; for living, for roughly 18 years now. During these years, I&amp;rsquo;ve been a programmer, system administrator, system engineer, team lead, manager, top manager. Didn&amp;rsquo;t like it, started over as a Software Engineer.
-My daily bread is Python, Django, DRF, AWS, Azure, sometimes even Terraform and Ansible.
-Free-time activities During my free time I built otvorenyparlament.info which I open sourced here. Translated to English, it means open parliament.</description>
     </item>
     
   </channel>
