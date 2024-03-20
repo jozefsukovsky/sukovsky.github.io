@@ -1,22 +1,20 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>pep on Jozef Sukovsky</title>
+    <title>Pep on Jozef Sukovsky</title>
     <link>https://sukovsky.com/tags/pep/</link>
-    <description>Recent content in pep on Jozef Sukovsky</description>
+    <description>Recent content in Pep on Jozef Sukovsky</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>© Jozef Sukovsky</copyright>
-    <lastBuildDate>Tue, 01 Sep 2020 14:00:00 +0000</lastBuildDate><atom:link href="https://sukovsky.com/tags/pep/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 01 Sep 2020 14:00:00 +0000</lastBuildDate>
+    <atom:link href="https://sukovsky.com/tags/pep/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>About Python Imports</title>
       <link>https://sukovsky.com/posts/2-about-python-imports/</link>
       <pubDate>Tue, 01 Sep 2020 14:00:00 +0000</pubDate>
-      
       <guid>https://sukovsky.com/posts/2-about-python-imports/</guid>
-      <description>Seeing some code snippets, sometimes hurts. Sometimes it hurts even more, realizing I&amp;rsquo;m the author. But very often, it hurts right in the beginning of the file. The imports.
-How this should be according to the theory Every other code editor or IDE has at least some possibility of linting. That&amp;rsquo;s the feature which will bother you to fix some stuff while writing your code. Even though, many people just consider it some game, where sustaining these suggestions is the goal of it.</description>
+      <description>Seeing some code snippets, sometimes hurts. Sometimes it hurts even more, realizing I&amp;rsquo;m the author. But very often, it hurts right in the beginning of the file. The imports.&#xA;How this should be according to the theory Every other code editor or IDE has at least some possibility of linting. That&amp;rsquo;s the feature which will bother you to fix some stuff while writing your code. Even though, many people just consider it some game, where sustaining these suggestions is the goal of it.</description>
     </item>
-    
   </channel>
 </rss>

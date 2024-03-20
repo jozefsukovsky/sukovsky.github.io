@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Drf on Jozef Sukovsky</title>
+    <link>https://sukovsky.com/tags/drf/</link>
+    <description>Recent content in Drf on Jozef Sukovsky</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>© Jozef Sukovsky</copyright>
+    <lastBuildDate>Wed, 20 Mar 2024 19:20:00 +0000</lastBuildDate>
+    <atom:link href="https://sukovsky.com/tags/drf/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Stress-testing Django, Django REST framework, FastAPI, Express.js, Go-chi and Axum</title>
+      <link>https://sukovsky.com/posts/5-stress-testing-django-drf-fastapi-expressjs-go-chi-axum/</link>
+      <pubDate>Wed, 20 Mar 2024 19:20:00 +0000</pubDate>
+      <guid>https://sukovsky.com/posts/5-stress-testing-django-drf-fastapi-expressjs-go-chi-axum/</guid>
+      <description>Intro While working with different stack combinations, I sometimes wonder about the true throughput/performance of each solution. It is not straightforward to compare them because every product is unique and possesses different features and design choices. However, some things can still be compared, even though not everything will be a fair comparison. This will be comparing apples with pears, plums and other fruits to get an idea of the capacity.</description>
+    </item>
+  </channel>
+</rss>

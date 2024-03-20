@@ -2,19 +2,58 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://sukovsky.com/</loc>
+    <lastmod>2024-03-20T19:20:00+00:00</lastmod>
+  </url><url>
     <loc>https://sukovsky.com/about/</loc>
     <lastmod>2021-12-29T20:45:00+01:00</lastmod>
   </url><url>
+    <loc>https://sukovsky.com/tags/api/</loc>
+    <lastmod>2024-03-20T19:20:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sukovsky.com/tags/axum/</loc>
+    <lastmod>2024-03-20T19:20:00+00:00</lastmod>
+  </url><url>
     <loc>https://sukovsky.com/tags/django/</loc>
-    <lastmod>2021-05-27T20:20:00+00:00</lastmod>
+    <lastmod>2024-03-20T19:20:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sukovsky.com/tags/drf/</loc>
+    <lastmod>2024-03-20T19:20:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sukovsky.com/tags/expressjs/</loc>
+    <lastmod>2024-03-20T19:20:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sukovsky.com/tags/fastapi/</loc>
+    <lastmod>2024-03-20T19:20:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sukovsky.com/tags/go-chi/</loc>
+    <lastmod>2024-03-20T19:20:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sukovsky.com/tags/gorm/</loc>
+    <lastmod>2024-03-20T19:20:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sukovsky.com/posts/</loc>
+    <lastmod>2024-03-20T19:20:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sukovsky.com/tags/rest/</loc>
+    <lastmod>2024-03-20T19:20:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sukovsky.com/tags/sqlalchemy/</loc>
+    <lastmod>2024-03-20T19:20:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sukovsky.com/tags/sqlx/</loc>
+    <lastmod>2024-03-20T19:20:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sukovsky.com/posts/5-stress-testing-django-drf-fastapi-expressjs-go-chi-axum/</loc>
+    <lastmod>2024-03-20T19:20:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sukovsky.com/tags/</loc>
+    <lastmod>2024-03-20T19:20:00+00:00</lastmod>
   </url><url>
     <loc>https://sukovsky.com/posts/4-django-user-trying-out-fastapi/</loc>
     <lastmod>2021-05-27T20:20:00+00:00</lastmod>
   </url><url>
     <loc>https://sukovsky.com/tags/falcon/</loc>
-    <lastmod>2021-05-27T20:20:00+00:00</lastmod>
-  </url><url>
-    <loc>https://sukovsky.com/tags/fastapi/</loc>
     <lastmod>2021-05-27T20:20:00+00:00</lastmod>
   </url><url>
     <loc>https://sukovsky.com/tags/flask/</loc>
@@ -23,22 +62,10 @@
     <loc>https://sukovsky.com/tags/hug/</loc>
     <lastmod>2021-05-27T20:20:00+00:00</lastmod>
   </url><url>
-    <loc>https://sukovsky.com/</loc>
-    <lastmod>2021-05-27T20:20:00+00:00</lastmod>
-  </url><url>
-    <loc>https://sukovsky.com/posts/</loc>
-    <lastmod>2021-05-27T20:20:00+00:00</lastmod>
-  </url><url>
     <loc>https://sukovsky.com/tags/pydantic/</loc>
     <lastmod>2021-05-27T20:20:00+00:00</lastmod>
   </url><url>
     <loc>https://sukovsky.com/tags/python/</loc>
-    <lastmod>2021-05-27T20:20:00+00:00</lastmod>
-  </url><url>
-    <loc>https://sukovsky.com/tags/sqlalchemy/</loc>
-    <lastmod>2021-05-27T20:20:00+00:00</lastmod>
-  </url><url>
-    <loc>https://sukovsky.com/tags/</loc>
     <lastmod>2021-05-27T20:20:00+00:00</lastmod>
   </url><url>
     <loc>https://sukovsky.com/tags/dev/</loc>

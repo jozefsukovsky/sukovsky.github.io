@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Stress-testing Django, Django REST framework, FastAPI, Express.js, Go-chi and Axum - Jozef Sukovsky</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	    
+    <meta name="twitter:card" content="Comparing apples with pears, plums and other fruits to get an idea of the capacity" />
+    <meta name="twitter:creator" content="@jozefsukovsky"/>
+    <meta property="og:url" content="https://sukovsky.com/posts/5-stress-testing-django-drf-fastapi-expressjs-go-chi-axum/" />
+    <meta property="og:title" content="Stress-testing Django, Django REST framework, FastAPI, Express.js, Go-chi and Axum" />
+    <meta property="og:description" content="Comparing apples with pears, plums and other fruits to get an idea of the capacity" />
+	<link rel="stylesheet" type="text/css" media="screen" href="https://sukovsky.com/css/normalize.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="https://sukovsky.com/css/syntax.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="https://sukovsky.com/css/cyberton.css" />
+</head><body><div class="grad-divider">
+<header>
+<div id="header" class="container">
+    <div class="branding">
+        <h1 class="site-title"><a href="https://sukovsky.com/">Jozef Sukovsky</a></h1>
+        <div class="site-copy">
+            My personal blog. Read it, now!
+            </div>
+    </div>
+    <input type="checkbox" id="res-nav">
+    <label for="res-nav"><div></div><div></div><div></div></label>
+    <nav id="main-nav">
+        <ul>
+            <li>
+				<a href="/">Home</a>
+			</li>
+			<li class="active">
+				<a href="/posts">Posts</a>
+			</li>
+			<li>
+				<a href="/about/">About</a>
+			</li>
+			<li>
+				<a href="/tags">Tags</a>
+			</li>
+			</ul>
+    </nav>
+</div>
+</header><div id="content">
+        
+    <main>
+    <div id="content" class="container">
+    
+    <article>
+        <header>
+            <time datetime="2024-03-20 19:20:00 &#43;0000 &#43;0000">20 Mar 24 19:20 UTC</time><h1><a href="/posts/5-stress-testing-django-drf-fastapi-expressjs-go-chi-axum/">Stress-testing Django, Django REST framework, FastAPI, Express.js, Go-chi and Axum</a></h1>
+        </header>
+        <section>
+        <h2 id="intro">Intro</h2>
+<p>While working with different stack combinations, I sometimes wonder about the true throughput/performance of each solution. It is not straightforward to compare them because every product is unique and possesses different features and design choices. However, some things can still be compared, even though not everything will be a fair comparison. This will be comparing apples with pears, plums and other fruits to get an idea of the capacity.</p>
+<h2 id="constraints">Constraints</h2>
+<p>I decided to perform two parts of this test. The first one will consist of a JSON response with pagination, foreign keys, and actual database content. The second part will be a more brute-force-like test, without a database but still with significant data to be serialized, and under higher concurrency. For the sake of testing, I disabled any kind of request logging.</p>
+<p>In some places, I control the inputs (e.g., page) more strictly, while in others, I ignore it. It was not worth switching context for every one just to gain no benefit. There may be minor response size changes, meaningly in go-chi solution, because it interprets the timestamp a bit differently. It is however so small diff, it was not worth sanitizing. In Django, however, white spaces in JSONs were removed (e.g.: instead of <code>&quot;key&quot;: &quot;val&quot;</code> having <code>&quot;key&quot;:&quot;val&quot;</code>) to make the JSON in line with other ones. Because this was quite a different response size otherwise.</p>
+<p>The final constraint is the test system: Ubuntu 22.04 running on an AMD Ryzen 5 3600 with 32GB of memory. Everything is running locally, no containers, nothing.</p>
+<h3 id="real-database-low-concurrency-constraints">Real database, low concurrency constraints</h3>
+<p>The first part will be performed under low concurrency because high load could negatively affect the database&rsquo;s performance, skewing the results. This will simulate a real-world scenario where data is typically used dynamically, and even the choice of serializer or database connection library can make a difference.</p>
+<p>All apps will use the same database, but some will utilize a mature, beefy ORM, while others will not. This mirrors real-life scenarios where ORMs are not used universally, and researching every possible option solely for this test is impractical. Some of my choices are based on popularity, as many people may use them in a similar manner.</p>
+<p>The database engine will be PostgreSQL, and each app will use a connection pool.</p>
+<p>Another constraint is running each app in a single fork and a single thread (apps can use more threads internally, like Rust for spawn_blocking()). First reason is to avoid possible concurrency issues. Second is
+managing the connection pool differently to not exhaust all the available server connections in case of running multiple forks. Finding the good setup is out of scope.</p>
+<h3 id="static-data-high-concurrency">Static data, high concurrency</h3>
+<p>Second part will use static data serialized in every request. This setup will use multiple forks or threads, utilizing as many processess/threads as available CPUs (physical and logical).</p>
+<h2 id="part-1-dynamic-content">Part 1: Dynamic content</h2>
+<h3 id="generic-design-choices">Generic design choices</h3>
+<p>The database was migrated/generated from Django because it was the most convenient option. It was afterwards imported into SQLAlchemy and even into Prisma. The response object is the same for every app and follows standard Django REST framework (DRF) response containing the following structure:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;count&#34;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;next&#34;</span><span class="p">:</span> <span class="kc">null</span> <span class="s2">&#34;or url string&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;previous&#34;</span><span class="p">:</span> <span class="kc">null</span> <span class="s2">&#34;or url string&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;results&#34;</span><span class="p">:</span> <span class="p">[{}]</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>For every API call, two database roundtrips will be performed, each consisting of distinct queries. The first query will execute a full COUNT() on the table, while the second query will be a SELECT with an INNER JOIN, LIMIT, and OFFSET clauses. While experimenting with solutions like COUNT() OVER and CTEs could provide valuable insights into how network latencies might affect the performance of two quick queries versus a single slow query, this exercise is considered out of scope for this test.</p>
+<p>The app will have a parent and child objects. With a foreign key relation.</p>
+<h3 id="app-options">App options</h3>
+<p>I chose Django + its internal JsonResponse because of my long history with it, and in many cases, it may still be a better choice than DRF or other solutions.</p>
+<p>I chose Django + DRF because it&rsquo;s a no-brainer for REST APIs and a very popular combination. Since I already chose Django, DRF is a natural option.</p>
+<p>I chose FastAPI + SQLAlchemy because it&rsquo;s popular, designed to be async, which brings a fresh difference compared to Django choices, and is favored by many. I have also used it in one product and was happy with it.</p>
+<p>I chose go-chi + GORM because I have used it for every Go app I&rsquo;ve developed so far.</p>
+<p>I chose Express.js + Prisma because it is a popular combination in multiple applications, even though I haven&rsquo;t worked with this setup before.</p>
+<p>I chose Axum + SQLx because Axum looked lightweight enough and I&rsquo;ve heard good things about SQLx. I haven&rsquo;t worked with this setup before.</p>
+<h3 id="particular-configurations">Particular configurations</h3>
+<h4 id="django">Django</h4>
+<p>By default, Django utilizes many different applications and middlewares. I decided to trim it down to django.contrib.auth and django.contrib.contenttypes, commenting out anything else and setting the MIDDLEWARE setting to empty. Additionally, I disabled debugging with DEBUG = False and the admin interface with ADMIN_ENABLED = False. The only reason I kept auth and contenttypes enabled is because of DRF dependency, making these two setups more comparable. I used low-level view functions instead of viewsets or similar constructs, as it didn&rsquo;t make much sense to use them in this context.</p>
+<p>In addition to the defaults, I used dj_db_conn_pool.backends.postgresql instead of the standard Django database backends.</p>
+<p>The test was performed using gunicorn. While I typically achieve better and more stable performance using uWSGI, gunicorn was chosen as it appears to be a more popular choice. The command used was <code>poetry run gunicorn djangoapp.wsgi --workers 1 --threads 1</code>.</p>
+<h4 id="django--drf">Django + DRF</h4>
+<p>The configuration is more or less the same as previously, with the addition of the rest_framework app. I modified the REST_FRAMEWORK configuration setting to handle 30 results per page and removed the BrowsableAPIRenderer, which is the default setting. I defined serializers for both models and a ModelViewSet, although it does not make sense for a single list view.</p>
+<p>I used the same gunicorn configuration as before: <code>poetry run gunicorn djangoapp.wsgi --workers 1 --threads 1 --bind 127.0.0.1:8001</code>.</p>
+<h4 id="fastapi--sqlalchemy">FastAPI + SQLAlchemy</h4>
+<p>I utilized FastAPI + uvloop, along with SQLAlchemy to dynamically map the database to ORM classes and utilize the provided connection pool.</p>
+<p>Run as <code>poetry run uvicorn main:app --host 127.0.0.1 --port 8002 --workers 1 --loop uvloop --no-access-log</code></p>
+<h4 id="go-chi--gorm">go-chi + GORM</h4>
+<p>Not much. Prepared modules, mainly go-chi, GORM + dependencies. Built with <code>go build -ldflags=&quot;-s -w&quot; main.go</code> and run with <code>GOMAXPROCS=1 ./main</code>.</p>
+<h4 id="expressjs--prisma">express.js + prisma</h4>
+<p>I generated the schema.prisma from the database and only added <code>@@map(&quot;table&quot;)</code> and renamed the models to match the intended design. Additionally, in the schema, I enabled generator client with <code>previewFeatures = [&quot;relationJoins&quot;]</code> as it was a test feature. The joining support in Prisma is poor, which results in poor query performance as well. However, I decided to follow their design as I couldn&rsquo;t find a better published solution. And doing it low-level SQL would render Prisma pointless.</p>
+<p>Other than that, I haven&rsquo;t done much more than the standard example app.</p>
+<p>Executed with <code>node app.js</code>.</p>
+<h4 id="axum--sqlx">Axum + SQLx</h4>
+<p>I can&rsquo;t provide much insight here because I&rsquo;m not experienced with this language, and the setup was the first time I set it up. Since I wanted to run it in a single thread, I used <code>#[tokio::main(flavor = &quot;current_thread&quot;)]</code>. I built it with cargo build &ndash;release and executed the output binary. That&rsquo;s all.</p>
+<h3 id="collecting-data">Collecting data</h3>
+<p>For each app, I run a single request to &ldquo;warm-up&rdquo; the app. Since I have only a single fork/thread, no need to do more. Then I run the following siege:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">siege -c <span class="m">1</span> -r <span class="m">1000</span> --log<span class="o">=</span>./siegelog/800X.csv ...
+</span></span></code></pre></div><p>And then just combine the CSV files.</p>
+<h3 id="results">Results</h3>
+<p>The following are the result as gathered on my testing machine.</p>
+<table>
+<thead>
+<tr>
+<th>App</th>
+<th>Elap Time (s)</th>
+<th>Resp Time (s)</th>
+<th>Transaction Rate (transactions/s)</th>
+<th>Throughput (MB/s)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Django</td>
+<td>3.13</td>
+<td>0</td>
+<td>319.49</td>
+<td>30.35</td>
+</tr>
+<tr>
+<td>Django + DRF</td>
+<td>4.6</td>
+<td>0</td>
+<td>217.39</td>
+<td>20.65</td>
+</tr>
+<tr>
+<td>FastAPI + SQLAlchemy</td>
+<td>5.81</td>
+<td>0.01</td>
+<td>172.12</td>
+<td>15.83</td>
+</tr>
+<tr>
+<td>Go-chi + GORM</td>
+<td>1.22</td>
+<td>0</td>
+<td>819.67</td>
+<td>78.69</td>
+</tr>
+<tr>
+<td>express.js + prisma</td>
+<td>3.77</td>
+<td>0</td>
+<td>265.25</td>
+<td>25.2</td>
+</tr>
+<tr>
+<td>Axum + SQLx</td>
+<td>1.17</td>
+<td>0</td>
+<td>854.7</td>
+<td>81.2</td>
+</tr>
+</tbody>
+</table>
+<p>There is no conclusion in this part. Only true surprise is low performance of FastAPI + SQLAlchemy setup.</p>
+<h2 id="part-2-static-content">Part 2: Static content</h2>
+<h3 id="generic-desing-choices--app-options">Generic desing choices + app options</h3>
+<p>For the second part of the test I used more or less the same setup. However, for this, two scenarios will be used. First will be a single process + single thread setup as above, but with multiple concurrencies. Second will be a setup, where in case of Python apps, number of forks equal to number of system threads will be used, for Go app the <code>GOMAXPROCS</code> won&rsquo;t be set to make it run in default mode, for the Axum app, multi thread flavor will be used and for the Express.js app, additional configuration supporting forks will be used (app_cluster.js vs app.js).</p>
+<p>One additional change. The Django + DRF won&rsquo;t be executed here. Because it doesn&rsquo;t really make sense to return static data from DRF.</p>
+<h3 id="collecting-data-1">Collecting data</h3>
+<p>Testing the multiprocessing setup will be performed with 1000 requests and with the following concurrencies:</p>
+<ul>
+<li>1</li>
+<li>50</li>
+<li>100</li>
+<li>150</li>
+<li>200</li>
+<li>250</li>
+</ul>
+<p>Each time, app will be warmed up with some requests batch.</p>
+<h3 id="limitations-of-the-experiment">Limitations of the experiment</h3>
+<p>It is not absolutely possible to compare these, because even such a fundamental thing as multi-process vs multi-threading behave differently. And the go-chi and Axum apps are completely self-served. For gunicorn, no respawn threshold will be set. This gives these setups a bit advantage over the real-world scenarios, because respawning is a costy operation and under high pressure, it really makes a difference throughput wise and response time wise. We can afford this simplification here, but would most likely end up with issues doing this in production.</p>
+<p>Under such a heavy concurrency it is also possible, that the client itself can start affecting the performance, but we will consider this not relevant.</p>
+<h3 id="results-1">Results</h3>
+<h4 id="data-transferred">Data transferred</h4>
+<p>This is basically constant and just to summarize it, it looked like this:</p>
+<table>
+<thead>
+<tr>
+<th>Concurrency</th>
+<th>Data transferred (MB)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>95.4</td>
+</tr>
+<tr>
+<td>50</td>
+<td>4770.04 (go: 4769.75)</td>
+</tr>
+<tr>
+<td>100</td>
+<td>9540.08 (go: 9539.51)</td>
+</tr>
+<tr>
+<td>150</td>
+<td>14310.12 (go: 14309.26)</td>
+</tr>
+<tr>
+<td>200</td>
+<td>19080.16 (go: 19079.02)</td>
+</tr>
+<tr>
+<td>250</td>
+<td>23850.2 (go: 23848.77)</td>
+</tr>
+</tbody>
+</table>
+<h4 id="elapsed-time">Elapsed Time</h4>
+<table>
+<thead>
+<tr>
+<th>Concurrency</th>
+<th>1</th>
+<th>50</th>
+<th>100</th>
+<th>150</th>
+<th>200</th>
+<th>250</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Django</td>
+<td>0.62</td>
+<td>5.55</td>
+<td>11.13</td>
+<td>16.58</td>
+<td>22.39</td>
+<td>33.65</td>
+</tr>
+<tr>
+<td>FastAPI</td>
+<td>1.61</td>
+<td>11.71</td>
+<td>24.16</td>
+<td>36.74</td>
+<td>49.7</td>
+<td>62.19</td>
+</tr>
+<tr>
+<td>Go-chi</td>
+<td>0.52</td>
+<td>3.88</td>
+<td>7.94</td>
+<td>12.02</td>
+<td>15.96</td>
+<td>20.37</td>
+</tr>
+<tr>
+<td>express.js</td>
+<td>1.31</td>
+<td>7.48</td>
+<td>14.15</td>
+<td>21.22</td>
+<td>28.11</td>
+<td>34.95</td>
+</tr>
+<tr>
+<td>Axum</td>
+<td>0.48</td>
+<td>3.28</td>
+<td>7.32</td>
+<td>10.89</td>
+<td>14.53</td>
+<td>18.04</td>
+</tr>
+</tbody>
+</table>
+<p><img src="/image/005/elapsed_time.svg" alt="Elapsed Time plot"></p>
+<h4 id="response-time">Response Time</h4>
+<table>
+<thead>
+<tr>
+<th>Concurrency</th>
+<th>1</th>
+<th>50</th>
+<th>100</th>
+<th>150</th>
+<th>200</th>
+<th>250</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Django</td>
+<td>0</td>
+<td>0.01</td>
+<td>0.01</td>
+<td>0.02</td>
+<td>0.02</td>
+<td>0.03</td>
+</tr>
+<tr>
+<td>FastAPI</td>
+<td>0</td>
+<td>0.01</td>
+<td>0.02</td>
+<td>0.04</td>
+<td>0.05</td>
+<td>0.06</td>
+</tr>
+<tr>
+<td>Go-chi</td>
+<td>0</td>
+<td>0</td>
+<td>0.01</td>
+<td>0.01</td>
+<td>0.02</td>
+<td>0.02</td>
+</tr>
+<tr>
+<td>express.js</td>
+<td>0</td>
+<td>0.01</td>
+<td>0.01</td>
+<td>0.02</td>
+<td>0.03</td>
+<td>0.03</td>
+</tr>
+<tr>
+<td>Axum</td>
+<td>0</td>
+<td>0</td>
+<td>0.01</td>
+<td>0.01</td>
+<td>0.01</td>
+<td>0.02</td>
+</tr>
+</tbody>
+</table>
+<p><img src="/image/005/response_time.svg" alt="Response Time plot"></p>
+<h4 id="transaction-rates">Transaction rate/s</h4>
+<table>
+<thead>
+<tr>
+<th>Concurrency</th>
+<th>1</th>
+<th>50</th>
+<th>100</th>
+<th>150</th>
+<th>200</th>
+<th>250</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Django</td>
+<td>1612.9</td>
+<td>9009.01</td>
+<td>8984.73</td>
+<td>9047.04</td>
+<td>8932.56</td>
+<td>7429.42</td>
+</tr>
+<tr>
+<td>FastAPI</td>
+<td>621.12</td>
+<td>4269.85</td>
+<td>4139.07</td>
+<td>4082.74</td>
+<td>4024.14</td>
+<td>4019.94</td>
+</tr>
+<tr>
+<td>Go-chi</td>
+<td>1923.08</td>
+<td>12886.6</td>
+<td>12594.46</td>
+<td>12479.2</td>
+<td>12531.33</td>
+<td>12272.95</td>
+</tr>
+<tr>
+<td>express.js</td>
+<td>763.36</td>
+<td>6684.49</td>
+<td>7067.14</td>
+<td>7068.8</td>
+<td>7114.91</td>
+<td>7153.08</td>
+</tr>
+<tr>
+<td>Axum</td>
+<td>2083.33</td>
+<td>15243.9</td>
+<td>13661.2</td>
+<td>13774.1</td>
+<td>13764.62</td>
+<td>13858.09</td>
+</tr>
+</tbody>
+</table>
+<p><img src="/image/005/transaction_rate.svg" alt="Transaction rate/s plot"></p>
+<h4 id="throughput-mbs">Throughput MB/s</h4>
+<table>
+<thead>
+<tr>
+<th>Concurrency</th>
+<th>1</th>
+<th>50</th>
+<th>100</th>
+<th>150</th>
+<th>200</th>
+<th>250</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Django</td>
+<td>153.87</td>
+<td>859.47</td>
+<td>857.15</td>
+<td>863.1</td>
+<td>852.17</td>
+<td>708.77</td>
+</tr>
+<tr>
+<td>FastAPI</td>
+<td>59.26</td>
+<td>407.35</td>
+<td>394.87</td>
+<td>389.5</td>
+<td>383.91</td>
+<td>383.51</td>
+</tr>
+<tr>
+<td>Go-chi</td>
+<td>183.45</td>
+<td>1229.32</td>
+<td>1201.45</td>
+<td>1190.45</td>
+<td>1195.43</td>
+<td>1170.78</td>
+</tr>
+<tr>
+<td>express.js</td>
+<td>72.83</td>
+<td>637.71</td>
+<td>674.21</td>
+<td>674.37</td>
+<td>678.77</td>
+<td>682.41</td>
+</tr>
+<tr>
+<td>Axum</td>
+<td>198.75</td>
+<td>1454.28</td>
+<td>1303.29</td>
+<td>1314.06</td>
+<td>1313.16</td>
+<td>1322.07</td>
+</tr>
+</tbody>
+</table>
+<p><img src="/image/005/throughput.svg" alt="Throughput MB/s plot"></p>
+<h4 id="longest-transaction">Longest transaction</h4>
+<table>
+<thead>
+<tr>
+<th>Concurrency</th>
+<th>1</th>
+<th>50</th>
+<th>100</th>
+<th>150</th>
+<th>200</th>
+<th>250</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Django</td>
+<td>0.01</td>
+<td>0.05</td>
+<td>0.05</td>
+<td>0.06</td>
+<td>0.06</td>
+<td>0.12</td>
+</tr>
+<tr>
+<td>FastAPI</td>
+<td>0.01</td>
+<td>0.05</td>
+<td>0.08</td>
+<td>0.1</td>
+<td>0.12</td>
+<td>0.13</td>
+</tr>
+<tr>
+<td>Go-chi</td>
+<td>0.01</td>
+<td>0.04</td>
+<td>0.11</td>
+<td>0.21</td>
+<td>0.29</td>
+<td>0.41</td>
+</tr>
+<tr>
+<td>express.js</td>
+<td>0.01</td>
+<td>0.04</td>
+<td>0.05</td>
+<td>0.08</td>
+<td>0.06</td>
+<td>0.09</td>
+</tr>
+<tr>
+<td>Axum</td>
+<td>0.01</td>
+<td>0.02</td>
+<td>0.05</td>
+<td>0.04</td>
+<td>0.08</td>
+<td>0.14</td>
+</tr>
+</tbody>
+</table>
+<p><img src="/image/005/longest_transaction.svg" alt="Longest Transaction plot"></p>
+<h3 id="conclusion">Conclusion</h3>
+<p>First, let&rsquo;s not forget this comparison is not completely fair and does not demonstrate real world scenarios.</p>
+<p>The performance of particular apps is not surprising, but as a long-time Django user who transitioned into DRF at some point, I forgot how much of a performance hit DRF incurs. However, that itself is not a reason to switch back to Django. And we have to bear in mind that the Django setup did not use any middleware. In most production environments, the results would look different.</p>
+<p>Another significant factor here is the complete disregard for respawning processes after N requests. I expected that if I performed an experiment with a respawn threshold of 1000 in Gunicorn, the longest transaction time would be much higher. However, nothing changed for this metric. The overall throughput and transaction rate dropped significantly, preserving the longest transaction time the same. But this is out of the scope of this article and hence, I&rsquo;m not publishing the differences in this article.</p>
+<p>FastAPI is surprisingly slow in this test. Since I haven&rsquo;t used it for 2 years, there will be some level of uncertainty remaining; a possibility that I&rsquo;ve done something wrong.</p>
+<p>Express.js was another surprise because, based on many &lsquo;Hello World&rsquo; brute force experiments, I expected more. It gets in par with my observations from my professional life.</p>
+<p>The true surprise, however, lies in the longest transaction response times from Go-chi and Axum. My assumption is that this is by design - the apps are multithreaded and manage the threads. Whereas, in other cases, I was just smashing the app and could roll this until it went out of memory. To explain this, I would need a different testing approach and collect more data - e.g., all response times to see how (un)stable the apps really are.</p>
+<p>This simple exercise brought many more questions (How would uWSGI perform over Gunicorn? How would FastAPI behave if asyncio was used instead of uvloop? How long until the app would eat all available memory without respawn, etc.). I will pick some for future articles.</p>
+<p>Source code used for testing is published <a href="https://github.com/jozefsukovsky/article-materials/tree/main/005_diff_api_perf">here</a></p>
+
+        </section>
+        
+        
+        <section>
+            <h3>Tags</h3>
+            <ul class="tags">
+                
+                    <li><a class="tag-link" href="https://sukovsky.com/tags/rest/">Rest</a></li>
+            
+                    <li><a class="tag-link" href="https://sukovsky.com/tags/api/">Api</a></li>
+            
+                    <li><a class="tag-link" href="https://sukovsky.com/tags/django/">Django</a></li>
+            
+                    <li><a class="tag-link" href="https://sukovsky.com/tags/drf/">Drf</a></li>
+            
+                    <li><a class="tag-link" href="https://sukovsky.com/tags/fastapi/">Fastapi</a></li>
+            
+                    <li><a class="tag-link" href="https://sukovsky.com/tags/expressjs/">Expressjs</a></li>
+            
+                    <li><a class="tag-link" href="https://sukovsky.com/tags/go-chi/">Go-Chi</a></li>
+            
+                    <li><a class="tag-link" href="https://sukovsky.com/tags/axum/">Axum</a></li>
+            
+                    <li><a class="tag-link" href="https://sukovsky.com/tags/sqlalchemy/">Sqlalchemy</a></li>
+            
+                    <li><a class="tag-link" href="https://sukovsky.com/tags/gorm/">Gorm</a></li>
+            
+                    <li><a class="tag-link" href="https://sukovsky.com/tags/sqlx/">Sqlx</a></li>
+            
+            </ul>
+        </section>
+        
+    </article>
+   
+    </div>
+    </main>
+</div>
+        <footer>
+<div id="footer" class="container">
+<div class="grad-divider"></div>
+    <nav>
+        <div>2024  © Jozef Sukovsky. <a target="_blank" href="https://github.com/jozefsukovsky">Github</a>. <a target="_blank" href="https://twitter.com/jozefsukovsky">Twitter</a>. <a target="_blank" href="https://www.linkedin.com/in/jozefsukovsky/">Linkedin</a>. <a target="_blank" href="/index.xml">RSS</a>. </div>
+        <div><a target="_blank" href="https://github.com/jozefsukovsky/hugo-cyberton">Cyberton</a> theme on&nbsp;<a target="_blank" href="https://gohugo.io">Hugo</a>.</div>
+    </nav>
+</div>
+</footer></body>
+</html>

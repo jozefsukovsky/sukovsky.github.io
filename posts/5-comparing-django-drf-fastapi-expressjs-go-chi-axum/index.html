@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Comparing Django, Django REST framework, FastAPI, Express.js, go-chi and Axum - Jozef Sukovsky</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	    
+    <meta name="twitter:card" content="Comparing JSON API response speed, design and stuff" />
+    <meta name="twitter:creator" content="@jozefsukovsky"/>
+    <meta property="og:url" content="http://localhost:1313/posts/5-comparing-django-drf-fastapi-expressjs-go-chi-axum/" />
+    <meta property="og:title" content="Comparing Django, Django REST framework, FastAPI, Express.js, go-chi and Axum" />
+    <meta property="og:description" content="Comparing JSON API response speed, design and stuff" />
+	<link rel="stylesheet" type="text/css" media="screen" href="http://localhost:1313/css/normalize.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="http://localhost:1313/css/syntax.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="http://localhost:1313/css/cyberton.css" />
+</head><body><div class="grad-divider">
+<header>
+<div id="header" class="container">
+    <div class="branding">
+        <h1 class="site-title"><a href="http://localhost:1313/">Jozef Sukovsky</a></h1>
+        <div class="site-copy">
+            My personal blog. Read it, now!
+            </div>
+    </div>
+    <input type="checkbox" id="res-nav">
+    <label for="res-nav"><div></div><div></div><div></div></label>
+    <nav id="main-nav">
+        <ul>
+            <li>
+				<a href="/">Home</a>
+			</li>
+			<li class="active">
+				<a href="/posts">Posts</a>
+			</li>
+			<li>
+				<a href="/about/">About</a>
+			</li>
+			<li>
+				<a href="/tags">Tags</a>
+			</li>
+			</ul>
+    </nav>
+</div>
+</header><div id="content">
+        
+    <main>
+    <div id="content" class="container">
+    
+    <article>
+        <header>
+            <time datetime="2024-02-29 20:20:00 &#43;0000 &#43;0000">29 Feb 24 20:20 UTC</time><h1><a href="/posts/5-comparing-django-drf-fastapi-expressjs-go-chi-axum/">Comparing Django, Django REST framework, FastAPI, Express.js, go-chi and Axum</a></h1>
+        </header>
+        <section>
+        <h2 id="intro">Intro</h2>
+<p>While working with different stack options, I sometimes wonder about the true throughput/performance of each solution. It is not straightforward to compare them because every product is unique and possesses different features and design choices. However, some things can still be compared, even though not everything will be a fair comparison.</p>
+<h2 id="constraints">Constraints</h2>
+<p>I decided to perform two parts of this test. The first one will consist of a JSON response with pagination, foreign keys, and actual database content. The second part will be a more brute-force-like test, without a database but still with significant data to be serialized, and under higher concurrency. For the sake of testing, I disabled any kind of request logging.</p>
+<p>In some places, I control the inputs (e.g., page) more strictly, while in others, I ignore it. It was not worth switching context for every one just to gain no benefit.</p>
+<p>The final constraint is the test system: Ubuntu 22.04 running on an AMD Ryzen 5 3600 with 32GB of memory.</p>
+<h3 id="real-database-low-concurrency-constraints">Real database, low concurrency constraints</h3>
+<p>The first part will be performed under low concurrency because high load could negatively affect the database&rsquo;s performance, skewing the results. This will simulate a real-world scenario where data is typically used dynamically, and even the choice of serializer or database connection library can make a difference.</p>
+<p>All apps will use the same database, but some will utilize a mature beefy ORM, while others will not. This mirrors real-life scenarios where ORMs are not used universally, and researching every possible option solely for this test is impractical. Some of my choices are based on popularity, as many people may use them in a similar manner.</p>
+<p>The database engine will be PostgreSQL, and each app will use a connection pool.</p>
+<p>Another constraint is running each app in a single fork and a single thread (apps can use more threads internally, like Rust for spawn_blocking()). First reason is to avoid possible concurrency issues. Second is
+managing the connection pool differently to not exhaust all the available server connections in case of running multiple forks. Finding the good setup is out of scope.</p>
+<h3 id="static-data-high-concurrency">Static data, high concurrency</h3>
+<p>Second part will use static data serialized in every request.</p>
+<h2 id="part-1-dynamic-content">Part 1: Dynamic content</h2>
+<h3 id="generic-design-choices">Generic design choices</h3>
+<p>The database was migrated/generated from Django because it was the most convenient option. It was afterwards imported into SQLAlchemy and even into Prisma. The response object is the same for every app and follows standard Django REST framework (DRF) response containing the following structure:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;count&#34;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;next&#34;</span><span class="p">:</span> <span class="kc">null</span> <span class="s2">&#34;or url string&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;previous&#34;</span><span class="p">:</span> <span class="kc">null</span> <span class="s2">&#34;or url string&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;results&#34;</span><span class="p">:</span> <span class="p">[{}]</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>For every API call, two database roundtrips will be performed, each consisting of distinct queries. The first query will execute a full COUNT() on the table, while the second query will be a SELECT with an INNER JOIN, LIMIT, and OFFSET clauses. While experimenting with solutions like COUNT() OVER and CTEs could provide valuable insights into how network latencies might affect the performance of two quick queries versus a single slow query, this exercise is considered out of scope for this test.</p>
+<p>The app will have a parent and child objects. With a foreign key relation.</p>
+<h3 id="app-options">App options</h3>
+<p>I chose Django + its internal JsonResponse because of my long history with it, and in many cases, it may still be a better choice than DRF or other solutions.</p>
+<p>I chose Django + DRF because it&rsquo;s a no-brainer for REST APIs and a very popular combination. Since I already chose Django, DRF is a natural option.</p>
+<p>I chose FastAPI + SQLAlchemy because it&rsquo;s popular, designed to be async, which brings a fresh difference compared to Django choices, and is favored by many. I have also used it in one product and was happy with it.</p>
+<p>I chose go-chi + GORM because I have used it for every Go app I&rsquo;ve developed so far.</p>
+<p>I chose Express.js + Prisma because it is a popular combination in multiple applications, even though I haven&rsquo;t worked with this setup before.</p>
+<p>I chose Axum + SQLx because Axum looked lightweight enough and I&rsquo;ve heard good things about SQLx. Even though I haven&rsquo;t worked with this setup before.</p>
+<h3 id="particular-configurations">Particular configurations</h3>
+<h4 id="django">Django</h4>
+<p>By default, Django utilizes many different applications and middlewares. I decided to trim it down to django.contrib.auth and django.contrib.contenttypes, commenting out anything else and setting the MIDDLEWARE setting to empty. Additionally, I disabled debugging with DEBUG = False and the admin interface with ADMIN_ENABLED = False. The only reason I kept auth and contenttypes enabled is because of DRF dependency, making these two setups more comparable. I used low-level view functions instead of viewsets or similar constructs, as it didn&rsquo;t make much sense to use them in this context.</p>
+<p>In addition to the defaults, I used dj_db_conn_pool.backends.postgresql instead of the standard Django database backends.</p>
+<p>The test was performed using gunicorn. While I typically achieve better and more stable performance using uWSGI, gunicorn was chosen as it appears to be a more popular choice. The command used was poetry run gunicorn djangoapp.wsgi &ndash;workers 1 &ndash;threads 1.</p>
+<h4 id="django--drf">Django + DRF</h4>
+<p>The configuration is more or less the same as previously, with the addition of the rest_framework app. I modified the REST_FRAMEWORK configuration setting to handle 30 results per page and removed the BrowsableAPIRenderer, which is the default setting. I defined serializers for both models and a ModelViewSet, although it does not make sense for a single list view.</p>
+<p>I used the same gunicorn configuration as before: poetry run gunicorn djangoapp.wsgi &ndash;workers 1 &ndash;threads 1 &ndash;bind 127.0.0.1:8001.</p>
+<h4 id="fastapi--sqlalchemy">FastAPI + SQLAlchemy</h4>
+<p>I utilized FastAPI + uvloop, along with SQLAlchemy to dynamically map the database to ORM classes and utilize the provided connection pool.</p>
+<p>Run as <code>poetry run uvicorn main:app --host 127.0.0.1 --port 8002 --workers 1 --loop uvloop --no-access-log</code></p>
+<h4 id="go-chi--gorm">go-chi + GORM</h4>
+<p>Not much. Prepared modules, mainly go-chi, GORM + dependencies. Built with <code>go build -ldflags=&quot;-s -w&quot; main.go</code> and run with <code>GOMAXPROCS=1 ./main</code>.</p>
+<h4 id="expressjs--prisma">express.js + prisma</h4>
+<p>I generated the schema.prisma from the database and only added <code>@@map(&quot;table&quot;)</code> and renamed the models to match the intended design. Additionally, in the schema, I enabled generator client with <code>previewFeatures = [&quot;relationJoins&quot;]</code> as it was a test feature. The joining support in Prisma is poor, which results in poor query performance as well. However, I decided to follow their design as I couldn&rsquo;t find a better published solution. And doing it low-level SQL would render Prisma pointless.</p>
+<p>Other than that, I haven&rsquo;t done much more than the standard example app.</p>
+<p>Executed with <code>node app.js</code>.</p>
+<h4 id="axum--sqlx">Axum + SQLx</h4>
+<p>I can&rsquo;t provide much insight here because I&rsquo;m not experienced with this language, and the setup was the first time I set it up. Since I wanted to run it in a single thread, I used <code>#[tokio::main(flavor = &quot;current_thread&quot;)]</code>. I built it with cargo build &ndash;release and executed the output binary. That&rsquo;s all.</p>
+<h3 id="collecting-data">Collecting data</h3>
+<p>For each app, I run a single request to &ldquo;warm-up&rdquo; the code. Since I have only a single fork/thread, no need to do more. Then I run the following siege:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">siege -c <span class="m">1</span> -r <span class="m">1000</span> --log<span class="o">=</span>./siegelog/800X.csv
+</span></span></code></pre></div><p>And then just combine the CSV files.</p>
+<h3 id="results">Results</h3>
+<p>TBA</p>
+<h2 id="part-2-static-content">Part 2: Static content</h2>
+<h3 id="generic-desing-choices--app-options">Generic desing choices + app options</h3>
+<p>For the second part of the test I used more or less the same setup. However, for this, two scenarios will be used. First will be a single process + single thread setup as above, but with multiple concurrencies. Second will be a setup, where in case of Python apps, number of forks equal to number of system threads will be used, for Go app the <code>GOMAXPROCS</code> won&rsquo;t be set to make it run in default mode, for the Axum app, multi thread flavor will be used and for the Express.js app, additional configuration supporting forks will be used.</p>
+<p>One additional change. The Django + DRF won&rsquo;t be executed here. Because it doesn&rsquo;t really matter at this stage.</p>
+<h3 id="collecting-data-1">Collecting data</h3>
+
+        </section>
+        
+        
+        <section>
+            <h3>Tags</h3>
+            <ul class="tags">
+                
+                    <li><a class="tag-link" href="http://localhost:1313/tags/rest/">Rest</a></li>
+            
+                    <li><a class="tag-link" href="http://localhost:1313/tags/api/">Api</a></li>
+            
+                    <li><a class="tag-link" href="http://localhost:1313/tags/django/">Django</a></li>
+            
+                    <li><a class="tag-link" href="http://localhost:1313/tags/drf/">Drf</a></li>
+            
+                    <li><a class="tag-link" href="http://localhost:1313/tags/fastapi/">Fastapi</a></li>
+            
+                    <li><a class="tag-link" href="http://localhost:1313/tags/expressjs/">Expressjs</a></li>
+            
+                    <li><a class="tag-link" href="http://localhost:1313/tags/go-chi/">Go-Chi</a></li>
+            
+                    <li><a class="tag-link" href="http://localhost:1313/tags/axum/">Axum</a></li>
+            
+                    <li><a class="tag-link" href="http://localhost:1313/tags/sqlalchemy/">Sqlalchemy</a></li>
+            
+                    <li><a class="tag-link" href="http://localhost:1313/tags/gorm/">Gorm</a></li>
+            
+                    <li><a class="tag-link" href="http://localhost:1313/tags/sqlx/">Sqlx</a></li>
+            
+            </ul>
+        </section>
+        
+    </article>
+   
+    </div>
+    </main>
+</div>
+        <footer>
+<div id="footer" class="container">
+<div class="grad-divider"></div>
+    <nav>
+        <div>2024  © Jozef Sukovsky. <a target="_blank" href="https://github.com/jozefsukovsky">Github</a>. <a target="_blank" href="https://twitter.com/jozefsukovsky">Twitter</a>. <a target="_blank" href="https://www.linkedin.com/in/jozefsukovsky/">Linkedin</a>. <a target="_blank" href="/index.xml">RSS</a>. </div>
+        <div><a target="_blank" href="https://github.com/jozefsukovsky/hugo-cyberton">Cyberton</a> theme on&nbsp;<a target="_blank" href="https://gohugo.io">Hugo</a>.</div>
+    </nav>
+</div>
+</footer></body>
+</html>

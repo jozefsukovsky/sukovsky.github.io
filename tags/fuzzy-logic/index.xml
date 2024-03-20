@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Fuzzy Logic on Jozef Sukovsky</title>
+    <link>http://localhost:1313/tags/fuzzy-logic/</link>
+    <description>Recent content in Fuzzy Logic on Jozef Sukovsky</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>© Jozef Sukovsky</copyright>
+    <lastBuildDate>Tue, 17 Oct 2023 20:20:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/fuzzy-logic/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>TBA</title>
+      <link>http://localhost:1313/posts/6-spam-filtering-with-bayesian-classifier/</link>
+      <pubDate>Tue, 17 Oct 2023 20:20:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/6-spam-filtering-with-bayesian-classifier/</guid>
+      <description>There is this hype of generative AI. Which usually is presented in a simplified manner of just &amp;ldquo;the AI&amp;rdquo;. It is like the cool kid. And like there was no ML/AI before. Just the age of darkness. The opposite is true. The term artificial intellingence (AI) is here since WWII and machine learning (ML) since 1960&amp;rsquo;s. And there were, and still are many fields which benefit from it, without being widely recognized.</description>
+    </item>
+  </channel>
+</rss>
