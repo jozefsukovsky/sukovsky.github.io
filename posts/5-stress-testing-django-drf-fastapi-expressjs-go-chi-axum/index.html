@@ -54,6 +54,8 @@
         <section>
         <h2 id="intro">Intro</h2>
 <p>While working with different stack combinations, I sometimes wonder about the true throughput/performance of each solution. It is not straightforward to compare them because every product is unique and possesses different features and design choices. However, some things can still be compared, even though not everything will be a fair comparison. This will be comparing apples with pears, plums and other fruits to get an idea of the capacity.</p>
+<h2 id="updates">Updates</h2>
+<p>2024-03-21 - Based on <a href="https://twitter.com/cosmastech/status/1770812045903950333">this</a> comment, I changed the FastAPI code to async approach and re-run tests</p>
 <h2 id="constraints">Constraints</h2>
 <p>I decided to perform two parts of this test. The first one will consist of a JSON response with pagination, foreign keys, and actual database content. The second part will be a more brute-force-like test, without a database but still with significant data to be serialized, and under higher concurrency. For the sake of testing, I disabled any kind of request logging.</p>
 <p>In some places, I control the inputs (e.g., page) more strictly, while in others, I ignore it. It was not worth switching context for every one just to gain no benefit. There may be minor response size changes, meaningly in go-chi solution, because it interprets the timestamp a bit differently. It is however so small diff, it was not worth sanitizing. In Django, however, white spaces in JSONs were removed (e.g.: instead of <code>&quot;key&quot;: &quot;val&quot;</code> having <code>&quot;key&quot;:&quot;val&quot;</code>) to make the JSON in line with other ones. Because this was quite a different response size otherwise.</p>
@@ -142,6 +144,13 @@ managing the connection pool differently to not exhaust all the available server
 <td>15.83</td>
 </tr>
 <tr>
+<td>FastAPI + SQLAlchemy (async)</td>
+<td>3.59</td>
+<td>0</td>
+<td>278.55</td>
+<td>25.63</td>
+</tr>
+<tr>
 <td>Go-chi + GORM</td>
 <td>1.22</td>
 <td>0</td>
@@ -167,7 +176,7 @@ managing the connection pool differently to not exhaust all the available server
 <p>There is no conclusion in this part. Only true surprise is low performance of FastAPI + SQLAlchemy setup.</p>
 <h2 id="part-2-static-content">Part 2: Static content</h2>
 <h3 id="generic-desing-choices--app-options">Generic desing choices + app options</h3>
-<p>For the second part of the test I used more or less the same setup. However, for this, two scenarios will be used. First will be a single process + single thread setup as above, but with multiple concurrencies. Second will be a setup, where in case of Python apps, number of forks equal to number of system threads will be used, for Go app the <code>GOMAXPROCS</code> won&rsquo;t be set to make it run in default mode, for the Axum app, multi thread flavor will be used and for the Express.js app, additional configuration supporting forks will be used (app_cluster.js vs app.js).</p>
+<p>For the second part of the test I used more or less the same setup, where in case of Python apps, number of forks equal to number of system threads will be used, for Go app the <code>GOMAXPROCS</code> won&rsquo;t be set to make it run in default mode, for the Axum app, multi thread flavor will be used and for the Express.js app, additional configuration supporting forks will be used (app_cluster.js vs app.js).</p>
 <p>One additional change. The Django + DRF won&rsquo;t be executed here. Because it doesn&rsquo;t really make sense to return static data from DRF.</p>
 <h3 id="collecting-data-1">Collecting data</h3>
 <p>Testing the multiprocessing setup will be performed with 1000 requests and with the following concurrencies:</p>
@@ -253,6 +262,15 @@ managing the connection pool differently to not exhaust all the available server
 <td>62.19</td>
 </tr>
 <tr>
+<td>FastAPI (async)</td>
+<td>1.52</td>
+<td>11.54</td>
+<td>23.2</td>
+<td>35.11</td>
+<td>47.32</td>
+<td>59.68</td>
+</tr>
+<tr>
 <td>Go-chi</td>
 <td>0.52</td>
 <td>3.88</td>
@@ -281,7 +299,7 @@ managing the connection pool differently to not exhaust all the available server
 </tr>
 </tbody>
 </table>
-<p><img src="/image/005/elapsed_time.svg" alt="Elapsed Time plot"></p>
+<p><img src="/image/005/elapsed_time_v2.svg" alt="Elapsed Time plot"></p>
 <h4 id="response-time">Response Time</h4>
 <table>
 <thead>
@@ -315,6 +333,15 @@ managing the connection pool differently to not exhaust all the available server
 <td>0.06</td>
 </tr>
 <tr>
+<td>FastAPI (async)</td>
+<td>0</td>
+<td>0.01</td>
+<td>0.02</td>
+<td>0.04</td>
+<td>0.05</td>
+<td>0.06</td>
+</tr>
+<tr>
 <td>Go-chi</td>
 <td>0</td>
 <td>0</td>
@@ -343,7 +370,7 @@ managing the connection pool differently to not exhaust all the available server
 </tr>
 </tbody>
 </table>
-<p><img src="/image/005/response_time.svg" alt="Response Time plot"></p>
+<p><img src="/image/005/response_time_v2.svg" alt="Response Time plot"></p>
 <h4 id="transaction-rates">Transaction rate/s</h4>
 <table>
 <thead>
@@ -377,6 +404,15 @@ managing the connection pool differently to not exhaust all the available server
 <td>4019.94</td>
 </tr>
 <tr>
+<td>FastAPI (async)</td>
+<td>657.89</td>
+<td>4332.76</td>
+<td>4310.34</td>
+<td>4272.29</td>
+<td>4226.54</td>
+<td>4189.01</td>
+</tr>
+<tr>
 <td>Go-chi</td>
 <td>1923.08</td>
 <td>12886.6</td>
@@ -405,7 +441,7 @@ managing the connection pool differently to not exhaust all the available server
 </tr>
 </tbody>
 </table>
-<p><img src="/image/005/transaction_rate.svg" alt="Transaction rate/s plot"></p>
+<p><img src="/image/005/transaction_rate_v2.svg" alt="Transaction rate/s plot"></p>
 <h4 id="throughput-mbs">Throughput MB/s</h4>
 <table>
 <thead>
@@ -439,6 +475,15 @@ managing the connection pool differently to not exhaust all the available server
 <td>383.51</td>
 </tr>
 <tr>
+<td>FastAPI (async)</td>
+<td>62.76</td>
+<td>413.35</td>
+<td>411.21</td>
+<td>407.58</td>
+<td>403.22</td>
+<td>399.63</td>
+</tr>
+<tr>
 <td>Go-chi</td>
 <td>183.45</td>
 <td>1229.32</td>
@@ -467,7 +512,7 @@ managing the connection pool differently to not exhaust all the available server
 </tr>
 </tbody>
 </table>
-<p><img src="/image/005/throughput.svg" alt="Throughput MB/s plot"></p>
+<p><img src="/image/005/throughput_v2.svg" alt="Throughput MB/s plot"></p>
 <h4 id="longest-transaction">Longest transaction</h4>
 <table>
 <thead>
@@ -501,6 +546,15 @@ managing the connection pool differently to not exhaust all the available server
 <td>0.13</td>
 </tr>
 <tr>
+<td>FastAPI (async)</td>
+<td>0.01</td>
+<td>0.06</td>
+<td>0.07</td>
+<td>0.1</td>
+<td>0.11</td>
+<td>0.12</td>
+</tr>
+<tr>
 <td>Go-chi</td>
 <td>0.01</td>
 <td>0.04</td>
@@ -529,7 +583,7 @@ managing the connection pool differently to not exhaust all the available server
 </tr>
 </tbody>
 </table>
-<p><img src="/image/005/longest_transaction.svg" alt="Longest Transaction plot"></p>
+<p><img src="/image/005/longest_transaction_v2.svg" alt="Longest Transaction plot"></p>
 <h3 id="conclusion">Conclusion</h3>
 <p>First, let&rsquo;s not forget this comparison is not completely fair and does not demonstrate real world scenarios.</p>
 <p>The performance of particular apps is not surprising, but as a long-time Django user who transitioned into DRF at some point, I forgot how much of a performance hit DRF incurs. However, that itself is not a reason to switch back to Django. And we have to bear in mind that the Django setup did not use any middleware. In most production environments, the results would look different.</p>
