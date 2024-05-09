@@ -4,11 +4,18 @@
     <title>Posts on Jozef Sukovsky</title>
     <link>https://sukovsky.com/posts/</link>
     <description>Recent content in Posts on Jozef Sukovsky</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <generator>Hugo</generator>
     <language>en-us</language>
     <copyright>© Jozef Sukovsky</copyright>
-    <lastBuildDate>Wed, 20 Mar 2024 19:20:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 09 May 2024 19:00:00 +0000</lastBuildDate>
     <atom:link href="https://sukovsky.com/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Python JSON de/serialization speed-up and its impact on Django performance</title>
+      <link>https://sukovsky.com/posts/6-python-json-serializers-performance/</link>
+      <pubDate>Thu, 09 May 2024 19:00:00 +0000</pubDate>
+      <guid>https://sukovsky.com/posts/6-python-json-serializers-performance/</guid>
+      <description>Intro This is a non-direct follow-up to Stress-testing Django, Django REST framework, FastAPI, Express.js, Go-chi and Axum.&#xA;The question we will answer is, how much can we squeeze from Django replacing the native json library. For most cases, standard json library does good enough. But sometimes, when we deal with huge payloads, it may be beneficial to do differently. In this article, we shall compare json, simplejson, orjson, python-rapidjson, ultrajson. Overall, there were some more, like hyperjson, perde, but such were already abandoned, or pyserde which I decided not to test because of a different usage pattern and the performance for this purpose wasn&amp;rsquo;t impressive.</description>
+    </item>
     <item>
       <title>Stress-testing Django, Django REST framework, FastAPI, Express.js, Go-chi and Axum</title>
       <link>https://sukovsky.com/posts/5-stress-testing-django-drf-fastapi-expressjs-go-chi-axum/</link>

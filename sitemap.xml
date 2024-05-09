@@ -3,10 +3,31 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://sukovsky.com/</loc>
-    <lastmod>2024-03-20T19:20:00+00:00</lastmod>
+    <lastmod>2024-05-09T19:00:00+00:00</lastmod>
   </url><url>
     <loc>https://sukovsky.com/about/</loc>
     <lastmod>2021-12-29T20:45:00+01:00</lastmod>
+  </url><url>
+    <loc>https://sukovsky.com/tags/json/</loc>
+    <lastmod>2024-05-09T19:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sukovsky.com/tags/performance/</loc>
+    <lastmod>2024-05-09T19:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sukovsky.com/posts/</loc>
+    <lastmod>2024-05-09T19:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sukovsky.com/tags/python/</loc>
+    <lastmod>2024-05-09T19:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sukovsky.com/posts/6-python-json-serializers-performance/</loc>
+    <lastmod>2024-05-09T19:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sukovsky.com/tags/serialization/</loc>
+    <lastmod>2024-05-09T19:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sukovsky.com/tags/</loc>
+    <lastmod>2024-05-09T19:00:00+00:00</lastmod>
   </url><url>
     <loc>https://sukovsky.com/tags/api/</loc>
     <lastmod>2024-03-20T19:20:00+00:00</lastmod>
@@ -32,9 +53,6 @@
     <loc>https://sukovsky.com/tags/gorm/</loc>
     <lastmod>2024-03-20T19:20:00+00:00</lastmod>
   </url><url>
-    <loc>https://sukovsky.com/posts/</loc>
-    <lastmod>2024-03-20T19:20:00+00:00</lastmod>
-  </url><url>
     <loc>https://sukovsky.com/tags/rest/</loc>
     <lastmod>2024-03-20T19:20:00+00:00</lastmod>
   </url><url>
@@ -45,9 +63,6 @@
     <lastmod>2024-03-20T19:20:00+00:00</lastmod>
   </url><url>
     <loc>https://sukovsky.com/posts/5-stress-testing-django-drf-fastapi-expressjs-go-chi-axum/</loc>
-    <lastmod>2024-03-20T19:20:00+00:00</lastmod>
-  </url><url>
-    <loc>https://sukovsky.com/tags/</loc>
     <lastmod>2024-03-20T19:20:00+00:00</lastmod>
   </url><url>
     <loc>https://sukovsky.com/posts/4-django-user-trying-out-fastapi/</loc>
@@ -63,9 +78,6 @@
     <lastmod>2021-05-27T20:20:00+00:00</lastmod>
   </url><url>
     <loc>https://sukovsky.com/tags/pydantic/</loc>
-    <lastmod>2021-05-27T20:20:00+00:00</lastmod>
-  </url><url>
-    <loc>https://sukovsky.com/tags/python/</loc>
     <lastmod>2021-05-27T20:20:00+00:00</lastmod>
   </url><url>
     <loc>https://sukovsky.com/tags/dev/</loc>

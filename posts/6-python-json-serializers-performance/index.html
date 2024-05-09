@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Python JSON de/serialization speed-up and its impact on Django performance - Jozef Sukovsky</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	    
+    <meta name="twitter:card" content="What can we gain from different non-standard JSON libraries in Python" />
+    <meta name="twitter:creator" content="@jozefsukovsky"/>
+    <meta property="og:url" content="https://sukovsky.com/posts/6-python-json-serializers-performance/" />
+    <meta property="og:title" content="Python JSON de/serialization speed-up and its impact on Django performance" />
+    <meta property="og:description" content="What can we gain from different non-standard JSON libraries in Python" />
+	<link rel="stylesheet" type="text/css" media="screen" href="https://sukovsky.com/css/normalize.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="https://sukovsky.com/css/syntax.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="https://sukovsky.com/css/cyberton.css" />
+</head><body><div class="grad-divider">
+<header>
+<div id="header" class="container">
+    <div class="branding">
+        <h1 class="site-title"><a href="https://sukovsky.com/">Jozef Sukovsky</a></h1>
+        <div class="site-copy">
+            My personal blog. Read it, now!
+            </div>
+    </div>
+    <input type="checkbox" id="res-nav">
+    <label for="res-nav"><div></div><div></div><div></div></label>
+    <nav id="main-nav">
+        <ul>
+            <li>
+				<a href="/">Home</a>
+			</li>
+			<li class="active">
+				<a href="/posts">Posts</a>
+			</li>
+			<li>
+				<a href="/about/">About</a>
+			</li>
+			<li>
+				<a href="/tags">Tags</a>
+			</li>
+			</ul>
+    </nav>
+</div>
+</header><div id="content">
+        
+    <main>
+    <div id="content" class="container">
+    
+    <article>
+        <header>
+            <time datetime="2024-05-09 19:00:00 &#43;0000 &#43;0000">09 May 24 19:00 UTC</time><h1><a href="/posts/6-python-json-serializers-performance/">Python JSON de/serialization speed-up and its impact on Django performance</a></h1>
+        </header>
+        <section>
+        <h2 id="intro">Intro</h2>
+<p>This is a non-direct follow-up to <a href="https://sukovsky.com/posts/5-stress-testing-django-drf-fastapi-expressjs-go-chi-axum/" title="article">Stress-testing Django, Django REST framework, FastAPI, Express.js, Go-chi and Axum</a>.</p>
+<p>The question we will answer is, how much can we squeeze from Django replacing the native json library. For most cases, standard json library does good enough. But sometimes, when we deal with huge payloads, it may be beneficial to do differently. In this article, we shall compare <code>json</code>, <code>simplejson</code>, <code>orjson</code>, <code>python-rapidjson</code>, <code>ultrajson</code>. Overall, there were some more, like <code>hyperjson</code>, <code>perde</code>, but such were already abandoned, or <code>pyserde</code> which I decided not to test because of a different usage pattern and the performance for this purpose wasn&rsquo;t impressive. Once we find the winner, we will replace the JsonResponse from the test setup from previous article and re-run the brute force load test.</p>
+<p>It is important to emphasize that we are only comparing the serialization and deserialization performance of these libraries, even though many of them offer additional features beyond this scope.</p>
+<h2 id="testing-the-serialization-and-deserialization">Testing the serialization and deserialization</h2>
+<p>We will use the same dictionary from the previous article. It was roughly 100kB. And we will serialize repeatedly and deserialize repeatedly.</p>
+<p>The initial test is very simple:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">timeit</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">NUMBER</span> <span class="o">=</span> <span class="mi">100000</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">LIBS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;json&#39;</span><span class="p">,</span> <span class="s1">&#39;orjson&#39;</span><span class="p">,</span> <span class="s1">&#39;ujson&#39;</span><span class="p">,</span> <span class="s1">&#39;simplejson&#39;</span><span class="p">,</span> <span class="s1">&#39;rapidjson&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">test_lib_dumps</span><span class="p">(</span><span class="n">lib</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">setup</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">import </span><span class="si">{</span><span class="n">lib</span><span class="si">}</span><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">from test_data import test_data
+</span></span></span><span class="line"><span class="cl"><span class="s2">&#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">statement</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2"></span><span class="si">{</span><span class="n">lib</span><span class="si">}</span><span class="s2">.dumps(test_data)
+</span></span></span><span class="line"><span class="cl"><span class="s2">&#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">result</span> <span class="o">=</span> <span class="n">timeit</span><span class="o">.</span><span class="n">timeit</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">        <span class="n">statement</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="n">setup</span><span class="o">=</span><span class="n">setup</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="n">number</span><span class="o">=</span><span class="n">NUMBER</span>
+</span></span><span class="line"><span class="cl">    <span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">lib</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">test_lib_loads</span><span class="p">(</span><span class="n">lib</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">setup</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">import json
+</span></span></span><span class="line"><span class="cl"><span class="s2">import </span><span class="si">{</span><span class="n">lib</span><span class="si">}</span><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">from test_data import test_data
+</span></span></span><span class="line"><span class="cl"><span class="s2">pload = json.dumps(test_data)
+</span></span></span><span class="line"><span class="cl"><span class="s2">&#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">statement</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2"></span><span class="si">{</span><span class="n">lib</span><span class="si">}</span><span class="s2">.loads(pload)
+</span></span></span><span class="line"><span class="cl"><span class="s2">&#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">result</span> <span class="o">=</span> <span class="n">timeit</span><span class="o">.</span><span class="n">timeit</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">        <span class="n">statement</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="n">setup</span><span class="o">=</span><span class="n">setup</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="n">number</span><span class="o">=</span><span class="n">NUMBER</span>
+</span></span><span class="line"><span class="cl">    <span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">lib</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;dumps&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">LIBS</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">test_lib_dumps</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;loads&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">LIBS</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">test_lib_loads</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</span></span></code></pre></div><p>Performing 100000 loads and dumps, the results are like this:</p>
+<table>
+<thead>
+<tr>
+<th>library</th>
+<th>dumps</th>
+<th>loads</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>json</td>
+<td>20.7906353750004</td>
+<td>17.3977316930013</td>
+</tr>
+<tr>
+<td>orjson</td>
+<td>1.65715706499941</td>
+<td>6.32882171100027</td>
+</tr>
+<tr>
+<td>ujson</td>
+<td>12.8270320129996</td>
+<td>19.7735966679993</td>
+</tr>
+<tr>
+<td>simplejson</td>
+<td>32.6206037989996</td>
+<td>11.9569048459998</td>
+</tr>
+<tr>
+<td>rapidjson</td>
+<td>25.2785933599989</td>
+<td>20.7954530970001</td>
+</tr>
+</tbody>
+</table>
+<p><img src="/image/006/serdeser.svg" alt="Serialization and deserialization results"></p>
+<p>We see some differences in the performence when doing serialization vs deserialization. And since there is a clear winner, we will continue with <code>orjson</code>.</p>
+<h2 id="using-orjson-library-in-django-view-replacing-jsonresponse">Using orjson library in Django view replacing JsonResponse</h2>
+<p>Following the djangoapp from the previous article, we will create custom <code>OrjsonResponse</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">orjson</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">django.core.serializers.json</span> <span class="kn">import</span> <span class="n">DjangoJSONEncoder</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">testapp.test_data</span> <span class="kn">import</span> <span class="n">test_data</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># we don&#39;t really need to strictly follow the HttpResponse,</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># but it is convenient for this example.</span>
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">OrjsonResponse</span><span class="p">(</span><span class="n">HttpResponse</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="n">data</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="n">encoder</span><span class="o">=</span><span class="n">DjangoJSONEncoder</span><span class="p">,</span> <span class="c1"># leaving this for reference</span>
+</span></span><span class="line"><span class="cl">        <span class="n">safe</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="n">json_dumps_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="c1"># leaving this for reference</span>
+</span></span><span class="line"><span class="cl">        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">safe</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">                <span class="s2">&#34;In order to allow non-dict objects to be serialized set the &#34;</span>
+</span></span><span class="line"><span class="cl">                <span class="s2">&#34;safe parameter to False.&#34;</span>
+</span></span><span class="line"><span class="cl">            <span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">json_dumps_params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="n">json_dumps_params</span> <span class="o">=</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">        <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&#34;content_type&#34;</span><span class="p">,</span> <span class="s2">&#34;application/json&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># data = json.dumps(data, cls=encoder, **json_dumps_params) # leaving this for reference</span>
+</span></span><span class="line"><span class="cl">        <span class="n">data</span> <span class="o">=</span> <span class="n">orjson</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">child_list_view</span><span class="p">(</span><span class="n">_request</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">OrjsonResponse</span><span class="p">(</span><span class="n">test_data</span><span class="p">)</span>
+</span></span></code></pre></div><p>Leaving the <code>OrjsonResponse</code> with all init arguments and pretending that the json_dumps_params are fully compatible. What is not true. This is just a boilerplate we need to adjust for real world use.</p>
+<h3 id="results">Results</h3>
+<p>As in the previous article, we don&rsquo;t respawn the forks, what could lead to a bit distorted results. It is however very individual how often to respawn what would affect the results a lot.</p>
+<h4 id="elapsed-time">Elapsed Time</h4>
+<table>
+<thead>
+<tr>
+<th>Concurrency</th>
+<th>1</th>
+<th>50</th>
+<th>100</th>
+<th>150</th>
+<th>200</th>
+<th>250</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Django</td>
+<td>0.62</td>
+<td>5.55</td>
+<td>11.13</td>
+<td>16.58</td>
+<td>22.39</td>
+<td>33.65</td>
+</tr>
+<tr>
+<td>Django+orjson</td>
+<td>0.41</td>
+<td>4.55</td>
+<td>9.13</td>
+<td>13.7</td>
+<td>18.29</td>
+<td>23.16</td>
+</tr>
+<tr>
+<td>Go-chi</td>
+<td>0.52</td>
+<td>3.88</td>
+<td>7.94</td>
+<td>12.02</td>
+<td>15.96</td>
+<td>20.37</td>
+</tr>
+</tbody>
+</table>
+<p><img src="/image/006/elapsed_time_v2.svg" alt="Elapsed Time plot"></p>
+<h4 id="response-time">Response Time</h4>
+<table>
+<thead>
+<tr>
+<th>Concurrency</th>
+<th>1</th>
+<th>50</th>
+<th>100</th>
+<th>150</th>
+<th>200</th>
+<th>250</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Django</td>
+<td>0</td>
+<td>0.01</td>
+<td>0.01</td>
+<td>0.02</td>
+<td>0.02</td>
+<td>0.03</td>
+</tr>
+<tr>
+<td>Django+orjson</td>
+<td>0</td>
+<td>0</td>
+<td>0.01</td>
+<td>0.01</td>
+<td>0.02</td>
+<td>0.02</td>
+</tr>
+<tr>
+<td>Go-chi</td>
+<td>0</td>
+<td>0</td>
+<td>0.01</td>
+<td>0.01</td>
+<td>0.02</td>
+<td>0.02</td>
+</tr>
+</tbody>
+</table>
+<p><img src="/image/006/response_time_v2.svg" alt="Response Time plot"></p>
+<h4 id="transaction-rates">Transaction rate/s</h4>
+<table>
+<thead>
+<tr>
+<th>Concurrency</th>
+<th>1</th>
+<th>50</th>
+<th>100</th>
+<th>150</th>
+<th>200</th>
+<th>250</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Django</td>
+<td>1612.9</td>
+<td>9009.01</td>
+<td>8984.73</td>
+<td>9047.04</td>
+<td>8932.56</td>
+<td>7429.42</td>
+</tr>
+<tr>
+<td>Django+orjson</td>
+<td>2439.02</td>
+<td>10989.01</td>
+<td>10952.9</td>
+<td>10948.91</td>
+<td>10934.94</td>
+<td>10794.47</td>
+</tr>
+<tr>
+<td>Go-chi</td>
+<td>1923.08</td>
+<td>12886.6</td>
+<td>12594.46</td>
+<td>12479.2</td>
+<td>12531.33</td>
+<td>12272.95</td>
+</tr>
+</tbody>
+</table>
+<p><img src="/image/006/transaction_rate_v2.svg" alt="Transaction rate/s plot"></p>
+<h4 id="throughput-mbs">Throughput MB/s</h4>
+<table>
+<thead>
+<tr>
+<th>Concurrency</th>
+<th>1</th>
+<th>50</th>
+<th>100</th>
+<th>150</th>
+<th>200</th>
+<th>250</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Django</td>
+<td>153.87</td>
+<td>859.47</td>
+<td>857.15</td>
+<td>863.1</td>
+<td>852.17</td>
+<td>708.77</td>
+</tr>
+<tr>
+<td>Django+orjson</td>
+<td>232.68</td>
+<td>1048.36</td>
+<td>1044.92</td>
+<td>1044.53</td>
+<td>1043.2</td>
+<td>1029.8</td>
+</tr>
+<tr>
+<td>Go-chi</td>
+<td>183.45</td>
+<td>1229.32</td>
+<td>1201.45</td>
+<td>1190.45</td>
+<td>1195.43</td>
+<td>1170.78</td>
+</tr>
+</tbody>
+</table>
+<p><img src="/image/006/throughput_v2.svg" alt="Throughput MB/s plot"></p>
+<h4 id="longest-transaction">Longest transaction</h4>
+<table>
+<thead>
+<tr>
+<th>Concurrency</th>
+<th>1</th>
+<th>50</th>
+<th>100</th>
+<th>150</th>
+<th>200</th>
+<th>250</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Django</td>
+<td>0.01</td>
+<td>0.05</td>
+<td>0.05</td>
+<td>0.06</td>
+<td>0.06</td>
+<td>0.12</td>
+</tr>
+<tr>
+<td>Django+orjson</td>
+<td>0.01</td>
+<td>0.05</td>
+<td>0.05</td>
+<td>0.08</td>
+<td>0.07</td>
+<td>0.08</td>
+</tr>
+<tr>
+<td>Go-chi</td>
+<td>0.01</td>
+<td>0.04</td>
+<td>0.11</td>
+<td>0.21</td>
+<td>0.29</td>
+<td>0.41</td>
+</tr>
+</tbody>
+</table>
+<p><img src="/image/006/longest_transaction_v2.svg" alt="Longest Transaction plot"></p>
+<h2 id="outro">Outro</h2>
+<p>Do we need to change the standard library? If not sure, probably not. Most times, the bottleneck will be somewhere else, but if we serialize/deserialize plenty of data, considering a drop-in replacement is worth it. We need to take in account that this change solves only a single case/problem and doesn&rsquo;t mean it will bring us magic gains in all circumstances.</p>
+
+        </section>
+        
+        
+        <section>
+            <h3>Tags</h3>
+            <ul class="tags">
+                
+                    <li><a class="tag-link" href="https://sukovsky.com/tags/json/">Json</a></li>
+            
+                    <li><a class="tag-link" href="https://sukovsky.com/tags/serialization/">Serialization</a></li>
+            
+                    <li><a class="tag-link" href="https://sukovsky.com/tags/python/">Python</a></li>
+            
+                    <li><a class="tag-link" href="https://sukovsky.com/tags/performance/">Performance</a></li>
+            
+            </ul>
+        </section>
+        
+    </article>
+   
+    </div>
+    </main>
+</div>
+        <footer>
+<div id="footer" class="container">
+<div class="grad-divider"></div>
+    <nav>
+        <div>2024  © Jozef Sukovsky. <a target="_blank" href="https://github.com/jozefsukovsky">Github</a>. <a target="_blank" href="https://twitter.com/jozefsukovsky">Twitter</a>. <a target="_blank" href="https://www.linkedin.com/in/jozefsukovsky/">Linkedin</a>. <a target="_blank" href="/index.xml">RSS</a>. </div>
+        <div><a target="_blank" href="https://github.com/jozefsukovsky/hugo-cyberton">Cyberton</a> theme on&nbsp;<a target="_blank" href="https://gohugo.io">Hugo</a>.</div>
+    </nav>
+</div>
+</footer></body>
+</html>
