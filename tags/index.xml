@@ -7,194 +7,208 @@
     <generator>Hugo</generator>
     <language>en-us</language>
     <copyright>© Jozef Sukovsky</copyright>
-    <lastBuildDate>Thu, 09 May 2024 19:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 26 Feb 2025 21:00:00 +0000</lastBuildDate>
     <atom:link href="https://sukovsky.com/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Authentication</title>
+      <link>https://sukovsky.com/tags/authentication/</link>
+      <pubDate>Wed, 26 Feb 2025 21:00:00 +0000</pubDate>
+      <guid>https://sukovsky.com/tags/authentication/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Authorization</title>
+      <link>https://sukovsky.com/tags/authorization/</link>
+      <pubDate>Wed, 26 Feb 2025 21:00:00 +0000</pubDate>
+      <guid>https://sukovsky.com/tags/authorization/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Django</title>
+      <link>https://sukovsky.com/tags/django/</link>
+      <pubDate>Wed, 26 Feb 2025 21:00:00 +0000</pubDate>
+      <guid>https://sukovsky.com/tags/django/</guid>
+      <description></description>
+    </item>
     <item>
       <title>Json</title>
       <link>https://sukovsky.com/tags/json/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <pubDate>Thu, 09 May 2024 19:00:00 +0000</pubDate>
       <guid>https://sukovsky.com/tags/json/</guid>
       <description></description>
     </item>
     <item>
       <title>Performance</title>
       <link>https://sukovsky.com/tags/performance/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <pubDate>Thu, 09 May 2024 19:00:00 +0000</pubDate>
       <guid>https://sukovsky.com/tags/performance/</guid>
       <description></description>
     </item>
     <item>
       <title>Python</title>
       <link>https://sukovsky.com/tags/python/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <pubDate>Thu, 09 May 2024 19:00:00 +0000</pubDate>
       <guid>https://sukovsky.com/tags/python/</guid>
       <description></description>
     </item>
     <item>
       <title>Serialization</title>
       <link>https://sukovsky.com/tags/serialization/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <pubDate>Thu, 09 May 2024 19:00:00 +0000</pubDate>
       <guid>https://sukovsky.com/tags/serialization/</guid>
       <description></description>
     </item>
     <item>
       <title>Api</title>
       <link>https://sukovsky.com/tags/api/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 20 Mar 2024 19:20:00 +0000</pubDate>
       <guid>https://sukovsky.com/tags/api/</guid>
       <description></description>
     </item>
     <item>
       <title>Axum</title>
       <link>https://sukovsky.com/tags/axum/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 20 Mar 2024 19:20:00 +0000</pubDate>
       <guid>https://sukovsky.com/tags/axum/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>Django</title>
-      <link>https://sukovsky.com/tags/django/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>https://sukovsky.com/tags/django/</guid>
       <description></description>
     </item>
     <item>
       <title>Drf</title>
       <link>https://sukovsky.com/tags/drf/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 20 Mar 2024 19:20:00 +0000</pubDate>
       <guid>https://sukovsky.com/tags/drf/</guid>
       <description></description>
     </item>
     <item>
       <title>Expressjs</title>
       <link>https://sukovsky.com/tags/expressjs/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 20 Mar 2024 19:20:00 +0000</pubDate>
       <guid>https://sukovsky.com/tags/expressjs/</guid>
       <description></description>
     </item>
     <item>
       <title>Fastapi</title>
       <link>https://sukovsky.com/tags/fastapi/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 20 Mar 2024 19:20:00 +0000</pubDate>
       <guid>https://sukovsky.com/tags/fastapi/</guid>
       <description></description>
     </item>
     <item>
       <title>Go-Chi</title>
       <link>https://sukovsky.com/tags/go-chi/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 20 Mar 2024 19:20:00 +0000</pubDate>
       <guid>https://sukovsky.com/tags/go-chi/</guid>
       <description></description>
     </item>
     <item>
       <title>Gorm</title>
       <link>https://sukovsky.com/tags/gorm/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 20 Mar 2024 19:20:00 +0000</pubDate>
       <guid>https://sukovsky.com/tags/gorm/</guid>
       <description></description>
     </item>
     <item>
       <title>Rest</title>
       <link>https://sukovsky.com/tags/rest/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 20 Mar 2024 19:20:00 +0000</pubDate>
       <guid>https://sukovsky.com/tags/rest/</guid>
       <description></description>
     </item>
     <item>
       <title>Sqlalchemy</title>
       <link>https://sukovsky.com/tags/sqlalchemy/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 20 Mar 2024 19:20:00 +0000</pubDate>
       <guid>https://sukovsky.com/tags/sqlalchemy/</guid>
       <description></description>
     </item>
     <item>
       <title>Sqlx</title>
       <link>https://sukovsky.com/tags/sqlx/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 20 Mar 2024 19:20:00 +0000</pubDate>
       <guid>https://sukovsky.com/tags/sqlx/</guid>
       <description></description>
     </item>
     <item>
       <title>Falcon</title>
       <link>https://sukovsky.com/tags/falcon/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <pubDate>Thu, 27 May 2021 20:20:00 +0000</pubDate>
       <guid>https://sukovsky.com/tags/falcon/</guid>
       <description></description>
     </item>
     <item>
       <title>Flask</title>
       <link>https://sukovsky.com/tags/flask/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <pubDate>Thu, 27 May 2021 20:20:00 +0000</pubDate>
       <guid>https://sukovsky.com/tags/flask/</guid>
       <description></description>
     </item>
     <item>
       <title>Hug</title>
       <link>https://sukovsky.com/tags/hug/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <pubDate>Thu, 27 May 2021 20:20:00 +0000</pubDate>
       <guid>https://sukovsky.com/tags/hug/</guid>
       <description></description>
     </item>
     <item>
       <title>Pydantic</title>
       <link>https://sukovsky.com/tags/pydantic/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <pubDate>Thu, 27 May 2021 20:20:00 +0000</pubDate>
       <guid>https://sukovsky.com/tags/pydantic/</guid>
       <description></description>
     </item>
     <item>
       <title>Dev</title>
       <link>https://sukovsky.com/tags/dev/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <pubDate>Sun, 04 Oct 2020 17:00:00 +0000</pubDate>
       <guid>https://sukovsky.com/tags/dev/</guid>
       <description></description>
     </item>
     <item>
       <title>Grumpy</title>
       <link>https://sukovsky.com/tags/grumpy/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <pubDate>Sun, 04 Oct 2020 17:00:00 +0000</pubDate>
       <guid>https://sukovsky.com/tags/grumpy/</guid>
       <description></description>
     </item>
     <item>
       <title>Technical Debt</title>
       <link>https://sukovsky.com/tags/technical-debt/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <pubDate>Sun, 04 Oct 2020 17:00:00 +0000</pubDate>
       <guid>https://sukovsky.com/tags/technical-debt/</guid>
       <description></description>
     </item>
     <item>
       <title>Import</title>
       <link>https://sukovsky.com/tags/import/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 01 Sep 2020 14:00:00 +0000</pubDate>
       <guid>https://sukovsky.com/tags/import/</guid>
       <description></description>
     </item>
     <item>
       <title>Pep</title>
       <link>https://sukovsky.com/tags/pep/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 01 Sep 2020 14:00:00 +0000</pubDate>
       <guid>https://sukovsky.com/tags/pep/</guid>
       <description></description>
     </item>
     <item>
       <title>Cyberton</title>
       <link>https://sukovsky.com/tags/cyberton/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <pubDate>Thu, 09 Jul 2020 02:12:00 +0000</pubDate>
       <guid>https://sukovsky.com/tags/cyberton/</guid>
       <description></description>
     </item>
     <item>
       <title>Hugo</title>
       <link>https://sukovsky.com/tags/hugo/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <pubDate>Thu, 09 Jul 2020 02:12:00 +0000</pubDate>
       <guid>https://sukovsky.com/tags/hugo/</guid>
       <description></description>
     </item>
     <item>
       <title>Theme</title>
       <link>https://sukovsky.com/tags/theme/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <pubDate>Thu, 09 Jul 2020 02:12:00 +0000</pubDate>
       <guid>https://sukovsky.com/tags/theme/</guid>
       <description></description>
     </item>

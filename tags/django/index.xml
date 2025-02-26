@@ -7,21 +7,28 @@
     <generator>Hugo</generator>
     <language>en-us</language>
     <copyright>© Jozef Sukovsky</copyright>
-    <lastBuildDate>Wed, 20 Mar 2024 19:20:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 26 Feb 2025 21:00:00 +0000</lastBuildDate>
     <atom:link href="https://sukovsky.com/tags/django/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Splitting Django authentication between public and internal interfaces</title>
+      <link>https://sukovsky.com/posts/7-django-split-roles/</link>
+      <pubDate>Wed, 26 Feb 2025 21:00:00 +0000</pubDate>
+      <guid>https://sukovsky.com/posts/7-django-split-roles/</guid>
+      <description>&lt;h2 id=&#34;intro&#34;&gt;Intro&lt;/h2&gt;&#xA;&lt;p&gt;Probably the most used Django feature is the admin. It&amp;rsquo;s rated as the most useful feature according to the &lt;a href=&#34;https://lp.jetbrains.com/django-developer-survey-2023/#django-usage&#34;&gt;Annual Django Survey&lt;/a&gt;. It helps to bring content management up to speed and with some love and effort, we can build rich management platforms with it.&lt;/p&gt;&#xA;&lt;h2 id=&#34;the-challenge&#34;&gt;The challenge&lt;/h2&gt;&#xA;&lt;p&gt;Django admin has a single users table, single session management and a single set of roles (users, groups, permissions). Public facing apps often leave the &lt;code&gt;/admin&lt;/code&gt; available to the world. This is still bearable, but it brings some overhead to assuring the authorization is done right. Of course, MFA helps a bit, but that&amp;rsquo;s not a silver bullet.&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Stress-testing Django, Django REST framework, FastAPI, Express.js, Go-chi and Axum</title>
       <link>https://sukovsky.com/posts/5-stress-testing-django-drf-fastapi-expressjs-go-chi-axum/</link>
       <pubDate>Wed, 20 Mar 2024 19:20:00 +0000</pubDate>
       <guid>https://sukovsky.com/posts/5-stress-testing-django-drf-fastapi-expressjs-go-chi-axum/</guid>
-      <description>Intro While working with different stack combinations, I sometimes wonder about the true throughput/performance of each solution. It is not straightforward to compare them because every product is unique and possesses different features and design choices. However, some things can still be compared, even though not everything will be a fair comparison. This will be comparing apples with pears, plums and other fruits to get an idea of the capacity.</description>
+      <description>&lt;h2 id=&#34;intro&#34;&gt;Intro&lt;/h2&gt;&#xA;&lt;p&gt;While working with different stack combinations, I sometimes wonder about the true throughput/performance of each solution. It is not straightforward to compare them because every product is unique and possesses different features and design choices. However, some things can still be compared, even though not everything will be a fair comparison. This will be comparing apples with pears, plums and other fruits to get an idea of the capacity.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Django user trying out FastAPI</title>
       <link>https://sukovsky.com/posts/4-django-user-trying-out-fastapi/</link>
       <pubDate>Thu, 27 May 2021 20:20:00 +0000</pubDate>
       <guid>https://sukovsky.com/posts/4-django-user-trying-out-fastapi/</guid>
-      <description>Django was my first choice for many years. But building new API-driven products using Django and Django REST Framework never brought that pleasing feeling I would like to feel.&#xA;The Good, the Bad and the Ugly It&amp;rsquo;s been around 2007 I stumbled upon Django framework. Needed to build a very simple image gallery, nothing serious. And since then, every time I had to do something to be displayed on the web, Django was my first choice.</description>
+      <description>&lt;p&gt;Django was my first choice for many years. But building new API-driven products using Django and Django REST Framework never brought that pleasing feeling I would like to feel.&lt;/p&gt;&#xA;&lt;h2 id=&#34;the-good-the-bad-and-the-ugly&#34;&gt;The Good, the Bad and the Ugly&lt;/h2&gt;&#xA;&lt;p&gt;It&amp;rsquo;s been around 2007 I stumbled upon &lt;a href=&#34;https://www.djangoproject.com/&#34;&gt;Django framework&lt;/a&gt;. Needed to build a very simple image gallery, nothing serious. And since then, every time I had to do something to be displayed on the web, Django was my first choice. What was a big deal for me was it&amp;rsquo;s ORM, &lt;code&gt;contrib.auth&lt;/code&gt; and &lt;code&gt;contrib.admin&lt;/code&gt;. Going up with and running in minutes, having some database models done really fast and being able to fill the tables with some test data right away was always a pleasing experience.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

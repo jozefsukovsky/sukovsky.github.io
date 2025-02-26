@@ -14,7 +14,7 @@
       <link>https://sukovsky.com/posts/1-hugo-cyberton-theme/</link>
       <pubDate>Thu, 09 Jul 2020 02:12:00 +0000</pubDate>
       <guid>https://sukovsky.com/posts/1-hugo-cyberton-theme/</guid>
-      <description>Before I launched my website, I decided to make my life harder by creating an open-source Hugo theme. And the earth would stop rolling, if I hadn&amp;rsquo;t written this post about it.&#xA;TL;DR This site uses Hugo. It is a static site generator written in Hugo. No dependency hell called node_modules. Many themes of various qualities can be found here. I was curious, how horrible it will be making my own.</description>
+      <description>&lt;p&gt;Before I launched my website, I decided to make my life harder by creating an open-source Hugo theme. And the earth would stop rolling, if I hadn&amp;rsquo;t written this post about it.&lt;/p&gt;&#xA;&lt;h2 id=&#34;tldr&#34;&gt;TL;DR&lt;/h2&gt;&#xA;&lt;p&gt;This site uses &lt;a href=&#34;https://gohugo.io/&#34;&gt;Hugo&lt;/a&gt;. It is a static site generator written in Hugo. No dependency hell called node_modules. Many themes of various qualities can be found &lt;a href=&#34;https://themes.gohugo.io/&#34;&gt;here&lt;/a&gt;. I was curious, how horrible it will be making my own. Which I called &lt;a href=&#34;https://github.com/jozefsukovsky/hugo-cyberton&#34;&gt;Cyberton&lt;/a&gt;.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

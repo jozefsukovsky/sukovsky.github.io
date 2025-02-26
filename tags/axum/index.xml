@@ -14,7 +14,7 @@
       <link>https://sukovsky.com/posts/5-stress-testing-django-drf-fastapi-expressjs-go-chi-axum/</link>
       <pubDate>Wed, 20 Mar 2024 19:20:00 +0000</pubDate>
       <guid>https://sukovsky.com/posts/5-stress-testing-django-drf-fastapi-expressjs-go-chi-axum/</guid>
-      <description>Intro While working with different stack combinations, I sometimes wonder about the true throughput/performance of each solution. It is not straightforward to compare them because every product is unique and possesses different features and design choices. However, some things can still be compared, even though not everything will be a fair comparison. This will be comparing apples with pears, plums and other fruits to get an idea of the capacity.</description>
+      <description>&lt;h2 id=&#34;intro&#34;&gt;Intro&lt;/h2&gt;&#xA;&lt;p&gt;While working with different stack combinations, I sometimes wonder about the true throughput/performance of each solution. It is not straightforward to compare them because every product is unique and possesses different features and design choices. However, some things can still be compared, even though not everything will be a fair comparison. This will be comparing apples with pears, plums and other fruits to get an idea of the capacity.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

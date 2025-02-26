@@ -115,40 +115,40 @@
 </span></span><span class="line"><span class="cl">        <span class="n">test_lib_loads</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 </span></span></code></pre></div><p>Performing 100000 loads and dumps, the results are like this:</p>
 <table>
-<thead>
-<tr>
-<th>library</th>
-<th>dumps</th>
-<th>loads</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>json</td>
-<td>20.7906353750004</td>
-<td>17.3977316930013</td>
-</tr>
-<tr>
-<td>orjson</td>
-<td>1.65715706499941</td>
-<td>6.32882171100027</td>
-</tr>
-<tr>
-<td>ujson</td>
-<td>12.8270320129996</td>
-<td>19.7735966679993</td>
-</tr>
-<tr>
-<td>simplejson</td>
-<td>32.6206037989996</td>
-<td>11.9569048459998</td>
-</tr>
-<tr>
-<td>rapidjson</td>
-<td>25.2785933599989</td>
-<td>20.7954530970001</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th>library</th>
+          <th>dumps</th>
+          <th>loads</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>json</td>
+          <td>20.7906353750004</td>
+          <td>17.3977316930013</td>
+      </tr>
+      <tr>
+          <td>orjson</td>
+          <td>1.65715706499941</td>
+          <td>6.32882171100027</td>
+      </tr>
+      <tr>
+          <td>ujson</td>
+          <td>12.8270320129996</td>
+          <td>19.7735966679993</td>
+      </tr>
+      <tr>
+          <td>simplejson</td>
+          <td>32.6206037989996</td>
+          <td>11.9569048459998</td>
+      </tr>
+      <tr>
+          <td>rapidjson</td>
+          <td>25.2785933599989</td>
+          <td>20.7954530970001</td>
+      </tr>
+  </tbody>
 </table>
 <p><img src="/image/006/serdeser.svg" alt="Serialization and deserialization results"></p>
 <p>We see some differences in the performence when doing serialization vs deserialization. And since there is a clear winner, we will continue with <code>orjson</code>.</p>
@@ -194,222 +194,222 @@
 <p>As in the previous article, we don&rsquo;t respawn the forks, what could lead to a bit distorted results. It is however very individual how often to respawn what would affect the results a lot.</p>
 <h4 id="elapsed-time">Elapsed Time</h4>
 <table>
-<thead>
-<tr>
-<th>Concurrency</th>
-<th>1</th>
-<th>50</th>
-<th>100</th>
-<th>150</th>
-<th>200</th>
-<th>250</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Django</td>
-<td>0.62</td>
-<td>5.55</td>
-<td>11.13</td>
-<td>16.58</td>
-<td>22.39</td>
-<td>33.65</td>
-</tr>
-<tr>
-<td>Django+orjson</td>
-<td>0.41</td>
-<td>4.55</td>
-<td>9.13</td>
-<td>13.7</td>
-<td>18.29</td>
-<td>23.16</td>
-</tr>
-<tr>
-<td>Go-chi</td>
-<td>0.52</td>
-<td>3.88</td>
-<td>7.94</td>
-<td>12.02</td>
-<td>15.96</td>
-<td>20.37</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th>Concurrency</th>
+          <th>1</th>
+          <th>50</th>
+          <th>100</th>
+          <th>150</th>
+          <th>200</th>
+          <th>250</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Django</td>
+          <td>0.62</td>
+          <td>5.55</td>
+          <td>11.13</td>
+          <td>16.58</td>
+          <td>22.39</td>
+          <td>33.65</td>
+      </tr>
+      <tr>
+          <td>Django+orjson</td>
+          <td>0.41</td>
+          <td>4.55</td>
+          <td>9.13</td>
+          <td>13.7</td>
+          <td>18.29</td>
+          <td>23.16</td>
+      </tr>
+      <tr>
+          <td>Go-chi</td>
+          <td>0.52</td>
+          <td>3.88</td>
+          <td>7.94</td>
+          <td>12.02</td>
+          <td>15.96</td>
+          <td>20.37</td>
+      </tr>
+  </tbody>
 </table>
 <p><img src="/image/006/elapsed_time_v2.svg" alt="Elapsed Time plot"></p>
 <h4 id="response-time">Response Time</h4>
 <table>
-<thead>
-<tr>
-<th>Concurrency</th>
-<th>1</th>
-<th>50</th>
-<th>100</th>
-<th>150</th>
-<th>200</th>
-<th>250</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Django</td>
-<td>0</td>
-<td>0.01</td>
-<td>0.01</td>
-<td>0.02</td>
-<td>0.02</td>
-<td>0.03</td>
-</tr>
-<tr>
-<td>Django+orjson</td>
-<td>0</td>
-<td>0</td>
-<td>0.01</td>
-<td>0.01</td>
-<td>0.02</td>
-<td>0.02</td>
-</tr>
-<tr>
-<td>Go-chi</td>
-<td>0</td>
-<td>0</td>
-<td>0.01</td>
-<td>0.01</td>
-<td>0.02</td>
-<td>0.02</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th>Concurrency</th>
+          <th>1</th>
+          <th>50</th>
+          <th>100</th>
+          <th>150</th>
+          <th>200</th>
+          <th>250</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Django</td>
+          <td>0</td>
+          <td>0.01</td>
+          <td>0.01</td>
+          <td>0.02</td>
+          <td>0.02</td>
+          <td>0.03</td>
+      </tr>
+      <tr>
+          <td>Django+orjson</td>
+          <td>0</td>
+          <td>0</td>
+          <td>0.01</td>
+          <td>0.01</td>
+          <td>0.02</td>
+          <td>0.02</td>
+      </tr>
+      <tr>
+          <td>Go-chi</td>
+          <td>0</td>
+          <td>0</td>
+          <td>0.01</td>
+          <td>0.01</td>
+          <td>0.02</td>
+          <td>0.02</td>
+      </tr>
+  </tbody>
 </table>
 <p><img src="/image/006/response_time_v2.svg" alt="Response Time plot"></p>
 <h4 id="transaction-rates">Transaction rate/s</h4>
 <table>
-<thead>
-<tr>
-<th>Concurrency</th>
-<th>1</th>
-<th>50</th>
-<th>100</th>
-<th>150</th>
-<th>200</th>
-<th>250</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Django</td>
-<td>1612.9</td>
-<td>9009.01</td>
-<td>8984.73</td>
-<td>9047.04</td>
-<td>8932.56</td>
-<td>7429.42</td>
-</tr>
-<tr>
-<td>Django+orjson</td>
-<td>2439.02</td>
-<td>10989.01</td>
-<td>10952.9</td>
-<td>10948.91</td>
-<td>10934.94</td>
-<td>10794.47</td>
-</tr>
-<tr>
-<td>Go-chi</td>
-<td>1923.08</td>
-<td>12886.6</td>
-<td>12594.46</td>
-<td>12479.2</td>
-<td>12531.33</td>
-<td>12272.95</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th>Concurrency</th>
+          <th>1</th>
+          <th>50</th>
+          <th>100</th>
+          <th>150</th>
+          <th>200</th>
+          <th>250</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Django</td>
+          <td>1612.9</td>
+          <td>9009.01</td>
+          <td>8984.73</td>
+          <td>9047.04</td>
+          <td>8932.56</td>
+          <td>7429.42</td>
+      </tr>
+      <tr>
+          <td>Django+orjson</td>
+          <td>2439.02</td>
+          <td>10989.01</td>
+          <td>10952.9</td>
+          <td>10948.91</td>
+          <td>10934.94</td>
+          <td>10794.47</td>
+      </tr>
+      <tr>
+          <td>Go-chi</td>
+          <td>1923.08</td>
+          <td>12886.6</td>
+          <td>12594.46</td>
+          <td>12479.2</td>
+          <td>12531.33</td>
+          <td>12272.95</td>
+      </tr>
+  </tbody>
 </table>
 <p><img src="/image/006/transaction_rate_v2.svg" alt="Transaction rate/s plot"></p>
 <h4 id="throughput-mbs">Throughput MB/s</h4>
 <table>
-<thead>
-<tr>
-<th>Concurrency</th>
-<th>1</th>
-<th>50</th>
-<th>100</th>
-<th>150</th>
-<th>200</th>
-<th>250</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Django</td>
-<td>153.87</td>
-<td>859.47</td>
-<td>857.15</td>
-<td>863.1</td>
-<td>852.17</td>
-<td>708.77</td>
-</tr>
-<tr>
-<td>Django+orjson</td>
-<td>232.68</td>
-<td>1048.36</td>
-<td>1044.92</td>
-<td>1044.53</td>
-<td>1043.2</td>
-<td>1029.8</td>
-</tr>
-<tr>
-<td>Go-chi</td>
-<td>183.45</td>
-<td>1229.32</td>
-<td>1201.45</td>
-<td>1190.45</td>
-<td>1195.43</td>
-<td>1170.78</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th>Concurrency</th>
+          <th>1</th>
+          <th>50</th>
+          <th>100</th>
+          <th>150</th>
+          <th>200</th>
+          <th>250</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Django</td>
+          <td>153.87</td>
+          <td>859.47</td>
+          <td>857.15</td>
+          <td>863.1</td>
+          <td>852.17</td>
+          <td>708.77</td>
+      </tr>
+      <tr>
+          <td>Django+orjson</td>
+          <td>232.68</td>
+          <td>1048.36</td>
+          <td>1044.92</td>
+          <td>1044.53</td>
+          <td>1043.2</td>
+          <td>1029.8</td>
+      </tr>
+      <tr>
+          <td>Go-chi</td>
+          <td>183.45</td>
+          <td>1229.32</td>
+          <td>1201.45</td>
+          <td>1190.45</td>
+          <td>1195.43</td>
+          <td>1170.78</td>
+      </tr>
+  </tbody>
 </table>
 <p><img src="/image/006/throughput_v2.svg" alt="Throughput MB/s plot"></p>
 <h4 id="longest-transaction">Longest transaction</h4>
 <table>
-<thead>
-<tr>
-<th>Concurrency</th>
-<th>1</th>
-<th>50</th>
-<th>100</th>
-<th>150</th>
-<th>200</th>
-<th>250</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Django</td>
-<td>0.01</td>
-<td>0.05</td>
-<td>0.05</td>
-<td>0.06</td>
-<td>0.06</td>
-<td>0.12</td>
-</tr>
-<tr>
-<td>Django+orjson</td>
-<td>0.01</td>
-<td>0.05</td>
-<td>0.05</td>
-<td>0.08</td>
-<td>0.07</td>
-<td>0.08</td>
-</tr>
-<tr>
-<td>Go-chi</td>
-<td>0.01</td>
-<td>0.04</td>
-<td>0.11</td>
-<td>0.21</td>
-<td>0.29</td>
-<td>0.41</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th>Concurrency</th>
+          <th>1</th>
+          <th>50</th>
+          <th>100</th>
+          <th>150</th>
+          <th>200</th>
+          <th>250</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Django</td>
+          <td>0.01</td>
+          <td>0.05</td>
+          <td>0.05</td>
+          <td>0.06</td>
+          <td>0.06</td>
+          <td>0.12</td>
+      </tr>
+      <tr>
+          <td>Django+orjson</td>
+          <td>0.01</td>
+          <td>0.05</td>
+          <td>0.05</td>
+          <td>0.08</td>
+          <td>0.07</td>
+          <td>0.08</td>
+      </tr>
+      <tr>
+          <td>Go-chi</td>
+          <td>0.01</td>
+          <td>0.04</td>
+          <td>0.11</td>
+          <td>0.21</td>
+          <td>0.29</td>
+          <td>0.41</td>
+      </tr>
+  </tbody>
 </table>
 <p><img src="/image/006/longest_transaction_v2.svg" alt="Longest Transaction plot"></p>
 <h2 id="outro">Outro</h2>

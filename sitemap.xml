@@ -3,18 +3,33 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://sukovsky.com/</loc>
-    <lastmod>2024-05-09T19:00:00+00:00</lastmod>
+    <lastmod>2025-02-26T21:00:00+00:00</lastmod>
   </url><url>
     <loc>https://sukovsky.com/about/</loc>
     <lastmod>2021-12-29T20:45:00+01:00</lastmod>
+  </url><url>
+    <loc>https://sukovsky.com/tags/authentication/</loc>
+    <lastmod>2025-02-26T21:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sukovsky.com/tags/authorization/</loc>
+    <lastmod>2025-02-26T21:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sukovsky.com/tags/django/</loc>
+    <lastmod>2025-02-26T21:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sukovsky.com/posts/</loc>
+    <lastmod>2025-02-26T21:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sukovsky.com/posts/7-django-split-roles/</loc>
+    <lastmod>2025-02-26T21:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sukovsky.com/tags/</loc>
+    <lastmod>2025-02-26T21:00:00+00:00</lastmod>
   </url><url>
     <loc>https://sukovsky.com/tags/json/</loc>
     <lastmod>2024-05-09T19:00:00+00:00</lastmod>
   </url><url>
     <loc>https://sukovsky.com/tags/performance/</loc>
-    <lastmod>2024-05-09T19:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://sukovsky.com/posts/</loc>
     <lastmod>2024-05-09T19:00:00+00:00</lastmod>
   </url><url>
     <loc>https://sukovsky.com/tags/python/</loc>
@@ -26,16 +41,10 @@
     <loc>https://sukovsky.com/tags/serialization/</loc>
     <lastmod>2024-05-09T19:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://sukovsky.com/tags/</loc>
-    <lastmod>2024-05-09T19:00:00+00:00</lastmod>
-  </url><url>
     <loc>https://sukovsky.com/tags/api/</loc>
     <lastmod>2024-03-20T19:20:00+00:00</lastmod>
   </url><url>
     <loc>https://sukovsky.com/tags/axum/</loc>
-    <lastmod>2024-03-20T19:20:00+00:00</lastmod>
-  </url><url>
-    <loc>https://sukovsky.com/tags/django/</loc>
     <lastmod>2024-03-20T19:20:00+00:00</lastmod>
   </url><url>
     <loc>https://sukovsky.com/tags/drf/</loc>

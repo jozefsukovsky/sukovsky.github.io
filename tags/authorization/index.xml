@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Authorization on Jozef Sukovsky</title>
+    <link>https://sukovsky.com/tags/authorization/</link>
+    <description>Recent content in Authorization on Jozef Sukovsky</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <copyright>© Jozef Sukovsky</copyright>
+    <lastBuildDate>Wed, 26 Feb 2025 21:00:00 +0000</lastBuildDate>
+    <atom:link href="https://sukovsky.com/tags/authorization/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Splitting Django authentication between public and internal interfaces</title>
+      <link>https://sukovsky.com/posts/7-django-split-roles/</link>
+      <pubDate>Wed, 26 Feb 2025 21:00:00 +0000</pubDate>
+      <guid>https://sukovsky.com/posts/7-django-split-roles/</guid>
+      <description>&lt;h2 id=&#34;intro&#34;&gt;Intro&lt;/h2&gt;&#xA;&lt;p&gt;Probably the most used Django feature is the admin. It&amp;rsquo;s rated as the most useful feature according to the &lt;a href=&#34;https://lp.jetbrains.com/django-developer-survey-2023/#django-usage&#34;&gt;Annual Django Survey&lt;/a&gt;. It helps to bring content management up to speed and with some love and effort, we can build rich management platforms with it.&lt;/p&gt;&#xA;&lt;h2 id=&#34;the-challenge&#34;&gt;The challenge&lt;/h2&gt;&#xA;&lt;p&gt;Django admin has a single users table, single session management and a single set of roles (users, groups, permissions). Public facing apps often leave the &lt;code&gt;/admin&lt;/code&gt; available to the world. This is still bearable, but it brings some overhead to assuring the authorization is done right. Of course, MFA helps a bit, but that&amp;rsquo;s not a silver bullet.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

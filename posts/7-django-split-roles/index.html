@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Splitting Django authentication between public and internal interfaces - Jozef Sukovsky</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	    
+    <meta name="twitter:card" content="How to split Django authentication between public and internal interfaces" />
+    <meta name="twitter:creator" content="@jozefsukovsky"/>
+    <meta property="og:url" content="https://sukovsky.com/posts/7-django-split-roles/" />
+    <meta property="og:title" content="Splitting Django authentication between public and internal interfaces" />
+    <meta property="og:description" content="How to split Django authentication between public and internal interfaces" />
+	<link rel="stylesheet" type="text/css" media="screen" href="https://sukovsky.com/css/normalize.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="https://sukovsky.com/css/syntax.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="https://sukovsky.com/css/cyberton.css" />
+</head><body><div class="grad-divider">
+<header>
+<div id="header" class="container">
+    <div class="branding">
+        <h1 class="site-title"><a href="https://sukovsky.com/">Jozef Sukovsky</a></h1>
+        <div class="site-copy">
+            My personal blog. Read it, now!
+            </div>
+    </div>
+    <input type="checkbox" id="res-nav">
+    <label for="res-nav"><div></div><div></div><div></div></label>
+    <nav id="main-nav">
+        <ul>
+            <li>
+				<a href="/">Home</a>
+			</li>
+			<li class="active">
+				<a href="/posts">Posts</a>
+			</li>
+			<li>
+				<a href="/about/">About</a>
+			</li>
+			<li>
+				<a href="/tags">Tags</a>
+			</li>
+			</ul>
+    </nav>
+</div>
+</header><div id="content">
+        
+    <main>
+    <div id="content" class="container">
+    
+    <article>
+        <header>
+            <time datetime="2025-02-26 21:00:00 &#43;0000 &#43;0000">26 Feb 25 21:00 UTC</time><h1><a href="/posts/7-django-split-roles/">Splitting Django authentication between public and internal interfaces</a></h1>
+        </header>
+        <section>
+        <h2 id="intro">Intro</h2>
+<p>Probably the most used Django feature is the admin. It&rsquo;s rated as the most useful feature according to the <a href="https://lp.jetbrains.com/django-developer-survey-2023/#django-usage">Annual Django Survey</a>. It helps to bring content management up to speed and with some love and effort, we can build rich management platforms with it.</p>
+<h2 id="the-challenge">The challenge</h2>
+<p>Django admin has a single users table, single session management and a single set of roles (users, groups, permissions). Public facing apps often leave the <code>/admin</code> available to the world. This is still bearable, but it brings some overhead to assuring the authorization is done right. Of course, MFA helps a bit, but that&rsquo;s not a silver bullet.</p>
+<p>Some best practices recommend splitting the authentication between public and internal systems. Some companies may have policies requiring this separation, and there are cases where it makes sense to completely separate the public part of application from the internal one. Including user management and authorization. Good example are ecommerce platforms where minimizing risk of any accidental opportunity for the user to have their permissions elevated is very welcome.</p>
+<h2 id="preparing-the-project">Preparing the project</h2>
+<p>In many cases, we would just rely on <code>is_superuser</code> or <code>is_staff</code> to take care of accessing Django admin. But for this case, we will approach it like two different applications. One will be public and the other one will provide Django admin, an internal interface. We will use the same project, just with two deployments and configurations.</p>
+<h3 id="setting-up-the-project">Setting up the project</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="nb">cd</span> ~/our/project_root
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">poetry init
+</span></span><span class="line"><span class="cl">poetry add Django
+</span></span><span class="line"><span class="cl">poetry run django-admin startproject split
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">cd</span> split
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">poetry run ./manage.py startapp account
+</span></span></code></pre></div><h3 id="preparing-the-settings">Preparing the settings</h3>
+<p>We need to edit the settings.py by placing a line somewhere on top (we can do it just after the imports)</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">ENVIRONMENT</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;ENVIRONMENT&#39;</span><span class="p">,</span> <span class="s1">&#39;public&#39;</span><span class="p">)</span>
+</span></span></code></pre></div><p>This will be used in the next step to define which configuration to use.</p>
+<p>Next, we modify <code>INSTALLED_APPS</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">INSTALLED_APPS</span> <span class="o">=</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># &#39;django.contrib.admin&#39;,</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;django.contrib.auth&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;django.contrib.contenttypes&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;django.contrib.sessions&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;django.contrib.messages&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;django.contrib.staticfiles&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;account&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="p">]</span>
+</span></span></code></pre></div><p>Commenting out admin and adding the account one. Note the admin doesn&rsquo;t have to be commented out, but there is no reason for it to be loaded in the public environment.</p>
+<h3 id="adding-account-models">Adding account models</h3>
+<p>Next we need to add models into account app:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">django.contrib.auth.models</span> <span class="kn">import</span> <span class="n">AbstractBaseUser</span><span class="p">,</span> <span class="n">BaseUserManager</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">django.contrib.sessions.models</span> <span class="kn">import</span> <span class="n">AbstractBaseSession</span><span class="p">,</span> <span class="n">BaseSessionManager</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">django.utils</span> <span class="kn">import</span> <span class="n">timezone</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">SessionManager</span><span class="p">(</span><span class="n">BaseSessionManager</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">use_in_migrations</span> <span class="o">=</span> <span class="kc">True</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">PublicSession</span><span class="p">(</span><span class="n">AbstractBaseSession</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">class</span> <span class="nc">Meta</span><span class="p">(</span><span class="n">AbstractBaseSession</span><span class="o">.</span><span class="n">Meta</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">db_table</span> <span class="o">=</span> <span class="s2">&#34;django_session_public&#34;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="n">objects</span> <span class="o">=</span> <span class="n">SessionManager</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nd">@classmethod</span>
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">get_session_store_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="kn">from</span> <span class="nn">.session</span> <span class="kn">import</span> <span class="n">SessionStore</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">SessionStore</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">UserManager</span><span class="p">(</span><span class="n">BaseUserManager</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;Define a model manager for User model with no username field.&#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">use_in_migrations</span> <span class="o">=</span> <span class="kc">True</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">_create_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="o">**</span><span class="n">extra_fields</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;&#34;&#34;Create and save a new user with the given email and password.&#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="ow">not</span> <span class="n">email</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Email is required&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">email</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_email</span><span class="p">(</span><span class="n">email</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">user</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">,</span> <span class="o">**</span><span class="n">extra_fields</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">user</span><span class="o">.</span><span class="n">set_password</span><span class="p">(</span><span class="n">password</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">user</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">using</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">user</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">create_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">extra_fields</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;&#34;&#34;Create and save a regular User instance with the given email and password.&#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_user</span><span class="p">(</span><span class="n">email</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="o">**</span><span class="n">extra_fields</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">AbstractBaseUser</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">USERNAME_FIELD</span> <span class="o">=</span> <span class="s1">&#39;email&#39;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">REQUIRED_FIELDS</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">email</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">EmailField</span><span class="p">(</span><span class="s1">&#39;Email Address&#39;</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">first_name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">last_name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">is_staff</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">is_active</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">is_superuser</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">date_joined</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">timezone</span><span class="o">.</span><span class="n">now</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">date_activated</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">objects</span> <span class="o">=</span> <span class="n">UserManager</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">email</span>
+</span></span></code></pre></div><h3 id="extending-the-settings">Extending the settings</h3>
+<p>And then we add more settings to the end of settings.py:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">if</span> <span class="n">ENVIRONMENT</span> <span class="o">==</span> <span class="s1">&#39;admin&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">INSTALLED_APPS</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;django.contrib.admin&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">elif</span> <span class="n">ENVIRONMENT</span> <span class="o">==</span> <span class="s1">&#39;public&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">AUTH_USER_MODEL</span> <span class="o">=</span> <span class="s1">&#39;account.User&#39;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">AUTHENTICATION_BACKENDS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;account.backends.EmailBackend&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">SESSION_ENGINE</span> <span class="o">=</span> <span class="s2">&#34;account.session&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">SESSION_COOKIE_NAME</span> <span class="o">=</span> <span class="s2">&#34;sessionid_public&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Invalid environment: </span><span class="si">{</span><span class="n">ENVIRONMENT</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</span></span></code></pre></div><p>The first condition loading <code>django.contrib.admin</code> for the <code>admin</code> environment. The second one is for the public environment. If the condition is met,
+we load the custom auth model, custom email backend and custom session engine with dedicated table.</p>
+<h3 id="adding-the-custom-session-engine">Adding the custom session engine</h3>
+<p>The session engine is a very simple override:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">django.contrib.sessions.backends.db</span> <span class="kn">import</span> <span class="n">SessionStore</span> <span class="k">as</span> <span class="n">DBStore</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">PublicSession</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">SessionStore</span><span class="p">(</span><span class="n">DBStore</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nd">@classmethod</span>
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">get_model_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">PublicSession</span>
+</span></span></code></pre></div><h3 id="email-back-end">Email back end</h3>
+<p>This will make the email authentication work with the custom setup:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">django.contrib.auth</span> <span class="kn">import</span> <span class="n">get_user_model</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">django.contrib.auth.backends</span> <span class="kn">import</span> <span class="n">ModelBackend</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">EmailBackend</span><span class="p">(</span><span class="n">ModelBackend</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">authenticate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">username</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">password</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="ow">not</span> <span class="n">username</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">password</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="kc">None</span>
+</span></span><span class="line"><span class="cl">        <span class="n">UserModel</span> <span class="o">=</span> <span class="n">get_user_model</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="k">try</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="n">user</span> <span class="o">=</span> <span class="n">UserModel</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">email</span><span class="o">=</span><span class="n">username</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">except</span> <span class="n">UserModel</span><span class="o">.</span><span class="n">DoesNotExist</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="kc">None</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">user</span><span class="o">.</span><span class="n">check_password</span><span class="p">(</span><span class="n">password</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_can_authenticate</span><span class="p">(</span><span class="n">user</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="n">user</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="kc">None</span>
+</span></span></code></pre></div><h3 id="migrations">Migrations</h3>
+<p>First we will run the admin migrations (this will be run only once):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="nv">ENVIRONMENT</span><span class="o">=</span>admin poetry run ./manage.py migrate
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nv">ENVIRONMENT</span><span class="o">=</span>public poetry run ./manage.py makemigrations account
+</span></span><span class="line"><span class="cl"><span class="nv">ENVIRONMENT</span><span class="o">=</span>public poetry run ./manage.py migrate
+</span></span></code></pre></div><p>The above migrates both the auth and account models.</p>
+<h3 id="adding-template-and-views">Adding template and views</h3>
+<p>We edit the <code>account/views.py</code> file adding the following:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">django.contrib.auth</span> <span class="kn">import</span> <span class="n">login</span><span class="p">,</span> <span class="n">logout</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">django.contrib.auth.forms</span> <span class="kn">import</span> <span class="n">AuthenticationForm</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="kn">import</span> <span class="n">redirect</span><span class="p">,</span> <span class="n">render</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">demo_view</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">form</span> <span class="o">=</span> <span class="n">AuthenticationForm</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">            <span class="n">login</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">form</span><span class="o">.</span><span class="n">get_user</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;demo_view&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">form</span> <span class="o">=</span> <span class="n">AuthenticationForm</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">is_authenticated</span> <span class="k">else</span> <span class="kc">None</span>
+</span></span><span class="line"><span class="cl">    <span class="n">context</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;form&#39;</span><span class="p">:</span> <span class="n">form</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;account/demo.html&#39;</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">logout_view</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">logout</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;demo_view&#39;</span><span class="p">)</span>
+</span></span></code></pre></div><p>For demo purposes, we only add demo view which will also serve as a login page and logout view. On POST request we try to login the user with provided credentials.
+Otherwise we either display login form or no. The rest is processed in the following <code>account/templates/account/demo.html</code> template file:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="line"><span class="cl">{% block content %}
+</span></span><span class="line"><span class="cl">  {% if user.is_authenticated %}
+</span></span><span class="line"><span class="cl">      <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Logged in as {{ user }}<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="p">&lt;</span><span class="nt">form</span> <span class="na">method</span><span class="o">=</span><span class="s">&#34;post&#34;</span> <span class="na">action</span><span class="o">=</span><span class="s">&#34;{% url &#39;logout_view&#39; %}&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">          {% csrf_token %}
+</span></span><span class="line"><span class="cl">          <span class="p">&lt;</span><span class="nt">button</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;submit&#34;</span><span class="p">&gt;</span>Logout<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">  {% else %}
+</span></span><span class="line"><span class="cl">      <span class="p">&lt;</span><span class="nt">form</span> <span class="na">method</span><span class="o">=</span><span class="s">&#34;post&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">          {% csrf_token %}
+</span></span><span class="line"><span class="cl">          {{ form.as_p }}
+</span></span><span class="line"><span class="cl">          <span class="p">&lt;</span><span class="nt">button</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;submit&#34;</span><span class="p">&gt;</span>Login<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">  {% endif %}
+</span></span><span class="line"><span class="cl">{% endblock %}
+</span></span></code></pre></div><p>Finally the <code>split/urls.py</code> file:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">django.contrib</span> <span class="kn">import</span> <span class="n">admin</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">django.urls</span> <span class="kn">import</span> <span class="n">path</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">django.conf</span> <span class="kn">import</span> <span class="n">settings</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">account.views</span> <span class="kn">import</span> <span class="n">demo_view</span><span class="p">,</span> <span class="n">logout_view</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">ENVIRONMENT</span> <span class="o">==</span> <span class="s1">&#39;admin&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">urlpatterns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path</span><span class="p">(</span><span class="s1">&#39;admin/&#39;</span><span class="p">,</span> <span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">urls</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">urlpatterns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">demo_view</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;demo_view&#39;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="n">urlpatterns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path</span><span class="p">(</span><span class="s1">&#39;logout/&#39;</span><span class="p">,</span> <span class="n">logout_view</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;logout_view&#39;</span><span class="p">))</span>
+</span></span></code></pre></div><h2 id="testing-the-setup">Testing the setup</h2>
+<h3 id="admin-instance">Admin instance</h3>
+<p>Let&rsquo;s create superuser account:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="nv">ENVIRONMENT</span><span class="o">=</span>admin poetry run ./manage.py createsuperuser
+</span></span><span class="line"><span class="cl">Username: super
+</span></span><span class="line"><span class="cl">Email address: super@super.sup
+</span></span><span class="line"><span class="cl">Password: 
+</span></span><span class="line"><span class="cl">Password <span class="o">(</span>again<span class="o">)</span>: 
+</span></span><span class="line"><span class="cl">Superuser created successfully.
+</span></span></code></pre></div><p>We can now start the admin instance:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="nv">ENVIRONMENT</span><span class="o">=</span>admin poetry run ./manage.py runserver 0.0.0.0:8880
+</span></span><span class="line"><span class="cl">Watching <span class="k">for</span> file changes with StatReloader
+</span></span><span class="line"><span class="cl">Performing system checks...
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">System check identified no issues <span class="o">(</span><span class="m">0</span> silenced<span class="o">)</span>.
+</span></span><span class="line"><span class="cl">February 25, <span class="m">2025</span> - 20:23:42
+</span></span><span class="line"><span class="cl">Django version 5.1.6, using settings <span class="s1">&#39;split.settings&#39;</span>
+</span></span><span class="line"><span class="cl">Starting development server at http://0.0.0.0:8880/
+</span></span><span class="line"><span class="cl">Quit the server with CONTROL-C.
+</span></span></code></pre></div><p>After opening <a href="http://localhost:8880/admin">http://localhost:8880/admin</a> we should see the login form. We can login with user <code>super</code> and the password we set.</p>
+<p><img src="/image/007/01-logged-in.png" alt="Logged in as super"></p>
+<p>But we don&rsquo;t have a way to add the public facing user, do we? Let&rsquo;s extend the account app with in <code>account/admin.py</code> file:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">django.contrib</span> <span class="kn">import</span> <span class="n">admin</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">django.contrib.auth.admin</span> <span class="kn">import</span> <span class="n">UserAdmin</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">django.contrib.auth.forms</span> <span class="kn">import</span> <span class="n">UserCreationForm</span><span class="p">,</span> <span class="n">UserChangeForm</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">User</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">AccountUserAdmin</span><span class="p">(</span><span class="n">UserAdmin</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">form</span> <span class="o">=</span> <span class="n">UserChangeForm</span>
+</span></span><span class="line"><span class="cl">    <span class="n">add_form</span> <span class="o">=</span> <span class="n">UserCreationForm</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">list_display</span> <span class="o">=</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">        <span class="s1">&#39;email&#39;</span><span class="p">,</span> <span class="s1">&#39;first_name&#39;</span><span class="p">,</span> <span class="s1">&#39;last_name&#39;</span><span class="p">,</span> <span class="s1">&#39;is_active&#39;</span><span class="p">,</span> <span class="s1">&#39;last_login&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">list_filter</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;is_active&#39;</span><span class="p">,</span> <span class="s1">&#39;date_joined&#39;</span><span class="p">,</span> <span class="s1">&#39;date_activated&#39;</span><span class="p">,</span> <span class="s1">&#39;last_login&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">fieldsets</span> <span class="o">=</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">        <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;fields&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">,</span> <span class="s1">&#39;password&#39;</span><span class="p">)}),</span>
+</span></span><span class="line"><span class="cl">        <span class="p">(</span><span class="s1">&#39;Personal info&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;fields&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;first_name&#39;</span><span class="p">,</span> <span class="s1">&#39;last_name&#39;</span><span class="p">)}),</span>
+</span></span><span class="line"><span class="cl">        <span class="p">(</span><span class="s1">&#39;Important dates&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;fields&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;last_login&#39;</span><span class="p">,</span> <span class="s1">&#39;date_joined&#39;</span><span class="p">,</span> <span class="s1">&#39;date_activated&#39;</span><span class="p">)}),</span>
+</span></span><span class="line"><span class="cl">        <span class="p">(</span><span class="s1">&#39;Permissions&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;fields&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;is_active&#39;</span><span class="p">,)}),</span>
+</span></span><span class="line"><span class="cl">    <span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">add_fieldsets</span> <span class="o">=</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">        <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="s1">&#39;classes&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;wide&#39;</span><span class="p">,),</span>
+</span></span><span class="line"><span class="cl">            <span class="s1">&#39;fields&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">,</span> <span class="s1">&#39;first_name&#39;</span><span class="p">,</span> <span class="s1">&#39;last_name&#39;</span><span class="p">,</span> <span class="s1">&#39;password1&#39;</span><span class="p">,</span> <span class="s1">&#39;password2&#39;</span><span class="p">,</span> <span class="s1">&#39;is_active&#39;</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}),</span>
+</span></span><span class="line"><span class="cl">    <span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">search_fields</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">,</span> <span class="s1">&#39;first_name&#39;</span><span class="p">,</span> <span class="s1">&#39;last_name&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ordering</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">,)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">filter_horizontal</span> <span class="o">=</span> <span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">User</span><span class="p">,</span> <span class="n">AccountUserAdmin</span><span class="p">)</span>
+</span></span></code></pre></div><p>After the dev server reloads and we refresh the admin site, we should see the new app with Users.</p>
+<p><img src="/image/007/02-add-user.png" alt="Users in admin"></p>
+<p>And we add a new user:</p>
+<p><img src="/image/007/03-add-user-form.png" alt="Add user"></p>
+<p>Once it is done, we can proceed.</p>
+<h3 id="public-instance">Public instance</h3>
+<p>We start the public instance:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="nv">ENVIRONMENT</span><span class="o">=</span>public poetry run ./manage.py runserver 0.0.0.0:8881
+</span></span><span class="line"><span class="cl">Watching <span class="k">for</span> file changes with StatReloader
+</span></span><span class="line"><span class="cl">Performing system checks...
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">System check identified no issues <span class="o">(</span><span class="m">0</span> silenced<span class="o">)</span>.
+</span></span><span class="line"><span class="cl">February 25, <span class="m">2025</span> - 20:38:09
+</span></span><span class="line"><span class="cl">Django version 5.1.6, using settings <span class="s1">&#39;split.settings&#39;</span>
+</span></span><span class="line"><span class="cl">Starting development server at http://0.0.0.0:8881/
+</span></span><span class="line"><span class="cl">Quit the server with CONTROL-C.
+</span></span></code></pre></div><p>And we check <a href="http://localhost:8881/">http://localhost:8881/</a>. We should see the login form</p>
+<p><img src="/image/007/05-login-public.png" alt="Login form"></p>
+<p>And then:</p>
+<p><img src="/image/007/06-login-public-success.png" alt="Logged in as user"></p>
+<h3 id="limitations--constraints--considerations">Limitations / Constraints / Considerations</h3>
+<p>We can check that we have two sets of session keys</p>
+<p><img src="/image/007/07-session-keys.png" alt="Session keys"></p>
+<p>This name differentiation is not required because the two interfaces will sit on two different subdomains/domains/whatever. It is for demo purposes and in this demo case it helps us to be logged in as both users in both urls on localhost within the same browser. What won&rsquo;t work however is the csrf token. It will work in two browsers or in two subdomains/domains though (or you will have to remember refresh the other tab after you&rsquo;ve done something in the first one).</p>
+<p>In the <code>PublicSession</code> we inherit from <code>AbstractBaseSession</code> and not from <code>Session</code> (what would be easier). This we do to really split auth completely. If we inherited from <code>Session</code> the approach would still work, but the new table would only reference the primary <code>django_session</code> and that would mean the session ids would be stored in the table used for admin interface. In such a case if we had two users (one admin one public) with the same user id and if we used single <code>SECRET_KEY</code>, the session store would be then possibly pointing to an id of super user. The overall risk would be close to zero, but let&rsquo;s rather have it this way. Anyways, having two <code>SECRET_KEY</code> values means, if we attempted cross-access between session keys, we would receive <code>Session data corrupted</code> error.</p>
+<p>There could be some corner cases where the <code>SessionStore</code> is imported from <code>django.contrib.sessions.backends.db</code> and not <code>account.session</code>. This shouldn&rsquo;t be a problem
+for most cases. But in case we plan to work with the direct imports somewhere, we have to take this into account.</p>
+<h2 id="outro">Outro</h2>
+<p>This is one of the options how to approach complete separation of users between the internal management and public facing app. One of the limitations of this approach is that we completely skipped groups and permissions. In case you want to use the built-in RBAC, this solution won&rsquo;t work for you as is.</p>
+<p>Please take this as a part of puzzle which you can build on top of. But you still need to approach it with caution as any work related to authentication and authorization.</p>
+<p>You can find the complete example in <a href="https://github.com/jozefsukovsky/article-materials/tree/main/007_django_split_auth">Github</a></p>
+
+        </section>
+        
+        
+        <section>
+            <h3>Tags</h3>
+            <ul class="tags">
+                
+                    <li><a class="tag-link" href="https://sukovsky.com/tags/django/">Django</a></li>
+            
+                    <li><a class="tag-link" href="https://sukovsky.com/tags/authentication/">Authentication</a></li>
+            
+                    <li><a class="tag-link" href="https://sukovsky.com/tags/authorization/">Authorization</a></li>
+            
+            </ul>
+        </section>
+        
+    </article>
+   
+    </div>
+    </main>
+</div>
+        <footer>
+<div id="footer" class="container">
+<div class="grad-divider"></div>
+    <nav>
+        <div>2025  © Jozef Sukovsky. <a target="_blank" href="https://github.com/jozefsukovsky">Github</a>. <a target="_blank" href="https://twitter.com/jozefsukovsky">Twitter</a>. <a target="_blank" href="https://www.linkedin.com/in/jozefsukovsky/">Linkedin</a>. <a target="_blank" href="/index.xml">RSS</a>. </div>
+        <div><a target="_blank" href="https://github.com/jozefsukovsky/hugo-cyberton">Cyberton</a> theme on&nbsp;<a target="_blank" href="https://gohugo.io">Hugo</a>.</div>
+    </nav>
+</div>
+</footer></body>
+</html>

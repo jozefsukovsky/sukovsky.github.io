@@ -7,49 +7,56 @@
     <generator>Hugo</generator>
     <language>en-us</language>
     <copyright>© Jozef Sukovsky</copyright>
-    <lastBuildDate>Thu, 09 May 2024 19:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 26 Feb 2025 21:00:00 +0000</lastBuildDate>
     <atom:link href="https://sukovsky.com/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Splitting Django authentication between public and internal interfaces</title>
+      <link>https://sukovsky.com/posts/7-django-split-roles/</link>
+      <pubDate>Wed, 26 Feb 2025 21:00:00 +0000</pubDate>
+      <guid>https://sukovsky.com/posts/7-django-split-roles/</guid>
+      <description>&lt;h2 id=&#34;intro&#34;&gt;Intro&lt;/h2&gt;&#xA;&lt;p&gt;Probably the most used Django feature is the admin. It&amp;rsquo;s rated as the most useful feature according to the &lt;a href=&#34;https://lp.jetbrains.com/django-developer-survey-2023/#django-usage&#34;&gt;Annual Django Survey&lt;/a&gt;. It helps to bring content management up to speed and with some love and effort, we can build rich management platforms with it.&lt;/p&gt;&#xA;&lt;h2 id=&#34;the-challenge&#34;&gt;The challenge&lt;/h2&gt;&#xA;&lt;p&gt;Django admin has a single users table, single session management and a single set of roles (users, groups, permissions). Public facing apps often leave the &lt;code&gt;/admin&lt;/code&gt; available to the world. This is still bearable, but it brings some overhead to assuring the authorization is done right. Of course, MFA helps a bit, but that&amp;rsquo;s not a silver bullet.&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Python JSON de/serialization speed-up and its impact on Django performance</title>
       <link>https://sukovsky.com/posts/6-python-json-serializers-performance/</link>
       <pubDate>Thu, 09 May 2024 19:00:00 +0000</pubDate>
       <guid>https://sukovsky.com/posts/6-python-json-serializers-performance/</guid>
-      <description>Intro This is a non-direct follow-up to Stress-testing Django, Django REST framework, FastAPI, Express.js, Go-chi and Axum.&#xA;The question we will answer is, how much can we squeeze from Django replacing the native json library. For most cases, standard json library does good enough. But sometimes, when we deal with huge payloads, it may be beneficial to do differently. In this article, we shall compare json, simplejson, orjson, python-rapidjson, ultrajson. Overall, there were some more, like hyperjson, perde, but such were already abandoned, or pyserde which I decided not to test because of a different usage pattern and the performance for this purpose wasn&amp;rsquo;t impressive.</description>
+      <description>&lt;h2 id=&#34;intro&#34;&gt;Intro&lt;/h2&gt;&#xA;&lt;p&gt;This is a non-direct follow-up to &lt;a href=&#34;https://sukovsky.com/posts/5-stress-testing-django-drf-fastapi-expressjs-go-chi-axum/&#34; title=&#34;article&#34;&gt;Stress-testing Django, Django REST framework, FastAPI, Express.js, Go-chi and Axum&lt;/a&gt;.&lt;/p&gt;&#xA;&lt;p&gt;The question we will answer is, how much can we squeeze from Django replacing the native json library. For most cases, standard json library does good enough. But sometimes, when we deal with huge payloads, it may be beneficial to do differently. In this article, we shall compare &lt;code&gt;json&lt;/code&gt;, &lt;code&gt;simplejson&lt;/code&gt;, &lt;code&gt;orjson&lt;/code&gt;, &lt;code&gt;python-rapidjson&lt;/code&gt;, &lt;code&gt;ultrajson&lt;/code&gt;. Overall, there were some more, like &lt;code&gt;hyperjson&lt;/code&gt;, &lt;code&gt;perde&lt;/code&gt;, but such were already abandoned, or &lt;code&gt;pyserde&lt;/code&gt; which I decided not to test because of a different usage pattern and the performance for this purpose wasn&amp;rsquo;t impressive. Once we find the winner, we will replace the JsonResponse from the test setup from previous article and re-run the brute force load test.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Stress-testing Django, Django REST framework, FastAPI, Express.js, Go-chi and Axum</title>
       <link>https://sukovsky.com/posts/5-stress-testing-django-drf-fastapi-expressjs-go-chi-axum/</link>
       <pubDate>Wed, 20 Mar 2024 19:20:00 +0000</pubDate>
       <guid>https://sukovsky.com/posts/5-stress-testing-django-drf-fastapi-expressjs-go-chi-axum/</guid>
-      <description>Intro While working with different stack combinations, I sometimes wonder about the true throughput/performance of each solution. It is not straightforward to compare them because every product is unique and possesses different features and design choices. However, some things can still be compared, even though not everything will be a fair comparison. This will be comparing apples with pears, plums and other fruits to get an idea of the capacity.</description>
+      <description>&lt;h2 id=&#34;intro&#34;&gt;Intro&lt;/h2&gt;&#xA;&lt;p&gt;While working with different stack combinations, I sometimes wonder about the true throughput/performance of each solution. It is not straightforward to compare them because every product is unique and possesses different features and design choices. However, some things can still be compared, even though not everything will be a fair comparison. This will be comparing apples with pears, plums and other fruits to get an idea of the capacity.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Django user trying out FastAPI</title>
       <link>https://sukovsky.com/posts/4-django-user-trying-out-fastapi/</link>
       <pubDate>Thu, 27 May 2021 20:20:00 +0000</pubDate>
       <guid>https://sukovsky.com/posts/4-django-user-trying-out-fastapi/</guid>
-      <description>Django was my first choice for many years. But building new API-driven products using Django and Django REST Framework never brought that pleasing feeling I would like to feel.&#xA;The Good, the Bad and the Ugly It&amp;rsquo;s been around 2007 I stumbled upon Django framework. Needed to build a very simple image gallery, nothing serious. And since then, every time I had to do something to be displayed on the web, Django was my first choice.</description>
+      <description>&lt;p&gt;Django was my first choice for many years. But building new API-driven products using Django and Django REST Framework never brought that pleasing feeling I would like to feel.&lt;/p&gt;&#xA;&lt;h2 id=&#34;the-good-the-bad-and-the-ugly&#34;&gt;The Good, the Bad and the Ugly&lt;/h2&gt;&#xA;&lt;p&gt;It&amp;rsquo;s been around 2007 I stumbled upon &lt;a href=&#34;https://www.djangoproject.com/&#34;&gt;Django framework&lt;/a&gt;. Needed to build a very simple image gallery, nothing serious. And since then, every time I had to do something to be displayed on the web, Django was my first choice. What was a big deal for me was it&amp;rsquo;s ORM, &lt;code&gt;contrib.auth&lt;/code&gt; and &lt;code&gt;contrib.admin&lt;/code&gt;. Going up with and running in minutes, having some database models done really fast and being able to fill the tables with some test data right away was always a pleasing experience.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Technical debt will eat your feet</title>
       <link>https://sukovsky.com/posts/3-tech-debt-will-eat-feet/</link>
       <pubDate>Sun, 04 Oct 2020 17:00:00 +0000</pubDate>
       <guid>https://sukovsky.com/posts/3-tech-debt-will-eat-feet/</guid>
-      <description>No matter what you believe, no matter what you do. If you befriended Technical Debt, you already know, what&amp;rsquo;s coming. Eventually.&#xA;Here and there, social networks offer some technical debt related brawls, jokes, memes and more or less relevant thoughts. My thoughts are the grumpy ones.&#xA;The boring part The boring part of technical debt is it&amp;rsquo;s formal nature. Which is very well described in here Technical Debt. I won&amp;rsquo;t be re-inventing wheel talking about theory.</description>
+      <description>&lt;p&gt;No matter what you believe, no matter what you do. If you befriended Technical Debt, you already know, what&amp;rsquo;s coming. Eventually.&lt;/p&gt;&#xA;&lt;p&gt;Here and there, social networks offer some technical debt related brawls, jokes, memes and more or less relevant thoughts. My thoughts are the grumpy ones.&lt;/p&gt;&#xA;&lt;h2 id=&#34;the-boring-part&#34;&gt;The boring part&lt;/h2&gt;&#xA;&lt;p&gt;The boring part of technical debt is it&amp;rsquo;s formal nature. Which is very well described in here &lt;a href=&#34;https://en.wikipedia.org/wiki/Technical_debt&#34;&gt;Technical Debt&lt;/a&gt;. I won&amp;rsquo;t be re-inventing wheel talking about theory. I will write from the developer point of view.&lt;/p&gt;</description>
     </item>
     <item>
       <title>About Python Imports</title>
       <link>https://sukovsky.com/posts/2-about-python-imports/</link>
       <pubDate>Tue, 01 Sep 2020 14:00:00 +0000</pubDate>
       <guid>https://sukovsky.com/posts/2-about-python-imports/</guid>
-      <description>Seeing some code snippets, sometimes hurts. Sometimes it hurts even more, realizing I&amp;rsquo;m the author. But very often, it hurts right in the beginning of the file. The imports.&#xA;How this should be according to the theory Every other code editor or IDE has at least some possibility of linting. That&amp;rsquo;s the feature which will bother you to fix some stuff while writing your code. Even though, many people just consider it some game, where sustaining these suggestions is the goal of it.</description>
+      <description>&lt;p&gt;Seeing some code snippets, sometimes hurts. Sometimes it hurts even more, realizing I&amp;rsquo;m the author. But very often, it hurts right in the beginning of the file. The imports.&lt;/p&gt;&#xA;&lt;h2 id=&#34;how-this-should-be-according-to-the-theory&#34;&gt;How this should be according to the theory&lt;/h2&gt;&#xA;&lt;p&gt;Every other code editor or IDE has at least some possibility of linting. That&amp;rsquo;s the feature which will bother you to fix some stuff while writing your code. Even though, many people just consider it some game, where sustaining these suggestions is the goal of it. Only it isn&amp;rsquo;t.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Cyberton theme</title>
       <link>https://sukovsky.com/posts/1-hugo-cyberton-theme/</link>
       <pubDate>Thu, 09 Jul 2020 02:12:00 +0000</pubDate>
       <guid>https://sukovsky.com/posts/1-hugo-cyberton-theme/</guid>
-      <description>Before I launched my website, I decided to make my life harder by creating an open-source Hugo theme. And the earth would stop rolling, if I hadn&amp;rsquo;t written this post about it.&#xA;TL;DR This site uses Hugo. It is a static site generator written in Hugo. No dependency hell called node_modules. Many themes of various qualities can be found here. I was curious, how horrible it will be making my own.</description>
+      <description>&lt;p&gt;Before I launched my website, I decided to make my life harder by creating an open-source Hugo theme. And the earth would stop rolling, if I hadn&amp;rsquo;t written this post about it.&lt;/p&gt;&#xA;&lt;h2 id=&#34;tldr&#34;&gt;TL;DR&lt;/h2&gt;&#xA;&lt;p&gt;This site uses &lt;a href=&#34;https://gohugo.io/&#34;&gt;Hugo&lt;/a&gt;. It is a static site generator written in Hugo. No dependency hell called node_modules. Many themes of various qualities can be found &lt;a href=&#34;https://themes.gohugo.io/&#34;&gt;here&lt;/a&gt;. I was curious, how horrible it will be making my own. Which I called &lt;a href=&#34;https://github.com/jozefsukovsky/hugo-cyberton&#34;&gt;Cyberton&lt;/a&gt;.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

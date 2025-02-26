@@ -14,7 +14,7 @@
       <link>https://sukovsky.com/posts/4-django-user-trying-out-fastapi/</link>
       <pubDate>Thu, 27 May 2021 20:20:00 +0000</pubDate>
       <guid>https://sukovsky.com/posts/4-django-user-trying-out-fastapi/</guid>
-      <description>Django was my first choice for many years. But building new API-driven products using Django and Django REST Framework never brought that pleasing feeling I would like to feel.&#xA;The Good, the Bad and the Ugly It&amp;rsquo;s been around 2007 I stumbled upon Django framework. Needed to build a very simple image gallery, nothing serious. And since then, every time I had to do something to be displayed on the web, Django was my first choice.</description>
+      <description>&lt;p&gt;Django was my first choice for many years. But building new API-driven products using Django and Django REST Framework never brought that pleasing feeling I would like to feel.&lt;/p&gt;&#xA;&lt;h2 id=&#34;the-good-the-bad-and-the-ugly&#34;&gt;The Good, the Bad and the Ugly&lt;/h2&gt;&#xA;&lt;p&gt;It&amp;rsquo;s been around 2007 I stumbled upon &lt;a href=&#34;https://www.djangoproject.com/&#34;&gt;Django framework&lt;/a&gt;. Needed to build a very simple image gallery, nothing serious. And since then, every time I had to do something to be displayed on the web, Django was my first choice. What was a big deal for me was it&amp;rsquo;s ORM, &lt;code&gt;contrib.auth&lt;/code&gt; and &lt;code&gt;contrib.admin&lt;/code&gt;. Going up with and running in minutes, having some database models done really fast and being able to fill the tables with some test data right away was always a pleasing experience.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

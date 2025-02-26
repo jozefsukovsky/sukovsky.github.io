@@ -14,7 +14,7 @@
       <link>https://sukovsky.com/posts/2-about-python-imports/</link>
       <pubDate>Tue, 01 Sep 2020 14:00:00 +0000</pubDate>
       <guid>https://sukovsky.com/posts/2-about-python-imports/</guid>
-      <description>Seeing some code snippets, sometimes hurts. Sometimes it hurts even more, realizing I&amp;rsquo;m the author. But very often, it hurts right in the beginning of the file. The imports.&#xA;How this should be according to the theory Every other code editor or IDE has at least some possibility of linting. That&amp;rsquo;s the feature which will bother you to fix some stuff while writing your code. Even though, many people just consider it some game, where sustaining these suggestions is the goal of it.</description>
+      <description>&lt;p&gt;Seeing some code snippets, sometimes hurts. Sometimes it hurts even more, realizing I&amp;rsquo;m the author. But very often, it hurts right in the beginning of the file. The imports.&lt;/p&gt;&#xA;&lt;h2 id=&#34;how-this-should-be-according-to-the-theory&#34;&gt;How this should be according to the theory&lt;/h2&gt;&#xA;&lt;p&gt;Every other code editor or IDE has at least some possibility of linting. That&amp;rsquo;s the feature which will bother you to fix some stuff while writing your code. Even though, many people just consider it some game, where sustaining these suggestions is the goal of it. Only it isn&amp;rsquo;t.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
