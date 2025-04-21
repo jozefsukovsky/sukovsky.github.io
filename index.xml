@@ -7,7 +7,7 @@
     <generator>Hugo</generator>
     <language>en-us</language>
     <copyright>© Jozef Sukovsky</copyright>
-    <lastBuildDate>Wed, 26 Feb 2025 21:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 21 Apr 2025 19:00:00 +0000</lastBuildDate>
     <atom:link href="https://sukovsky.com/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>About</title>
@@ -15,6 +15,13 @@
       <pubDate>Wed, 29 Dec 2021 20:45:00 +0100</pubDate>
       <guid>https://sukovsky.com/about/</guid>
       <description>&lt;p&gt;Hey, my name is Jozef. I &amp;ldquo;do the IT&amp;rdquo; for living, for almost 22 years now. During these years, I&amp;rsquo;ve been a programmer, system administrator, system engineer, team lead, manager, top manager. Didn&amp;rsquo;t like it, started over as a Software Engineer.&lt;/p&gt;&#xA;&lt;p&gt;I write Python, Go and TypeScript. Back then, I was a Django guy, spent years working with AWS, Azure, Terraform and Ansible.&lt;/p&gt;&#xA;&lt;h4 id=&#34;free-time-activities&#34;&gt;Free-time activities&lt;/h4&gt;&#xA;&lt;p&gt;During my free time I built &lt;a href=&#34;https://otvorenyparlament.ifno&#34;&gt;otvorenyparlament.info&lt;/a&gt; which I open sourced &lt;a href=&#34;https://github.com/otvorenyparlament&#34;&gt;here&lt;/a&gt;. Translated to English, it means open parliament. The Slovak National Council website is at least 10 years old and ugly. I had different opinions how to present parliamentary data, so I decided to build a crawler, backend and I generate views and aggregations I consider important. For this journey, I chose PostgreSQL, Django, very flexible GraphQL API and Vue.js. Data is crawled with Scrapy and whole workflow is managed with Apache Airflow.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Django Postgres enums</title>
+      <link>https://sukovsky.com/posts/8-django-pg-enums/</link>
+      <pubDate>Mon, 21 Apr 2025 19:00:00 +0000</pubDate>
+      <guid>https://sukovsky.com/posts/8-django-pg-enums/</guid>
+      <description>&lt;h2 id=&#34;intro&#34;&gt;Intro&lt;/h2&gt;&#xA;&lt;p&gt;When handling select boxes / dropdowns, in Django we use choices feature. Most times it is choices attached to &lt;code&gt;CharField&lt;/code&gt; or any of integer fields. This manages the standard char/text/int&#xA;column in the database and we see the easily rendered select boxes. It works for most cases and the reason why it&amp;rsquo;s done this way is the Django support for multiple different database engines. In other words, a cost of universality.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Splitting Django authentication between public and internal interfaces</title>

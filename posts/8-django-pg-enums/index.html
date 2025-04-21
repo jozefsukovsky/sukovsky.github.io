@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Django Postgres enums - Jozef Sukovsky</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	    
+    <meta name="twitter:card" content="How to use native Postgres enums in Django project" />
+    <meta name="twitter:creator" content="@jozefsukovsky"/>
+    <meta property="og:url" content="https://sukovsky.com/posts/8-django-pg-enums/" />
+    <meta property="og:title" content="Django Postgres enums" />
+    <meta property="og:description" content="How to use native Postgres enums in Django project" />
+	<link rel="stylesheet" type="text/css" media="screen" href="https://sukovsky.com/css/normalize.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="https://sukovsky.com/css/syntax.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="https://sukovsky.com/css/cyberton.css" />
+</head><body><div class="grad-divider">
+<header>
+<div id="header" class="container">
+    <div class="branding">
+        <h1 class="site-title"><a href="https://sukovsky.com/">Jozef Sukovsky</a></h1>
+        <div class="site-copy">
+            My personal blog. Read it, now!
+            </div>
+    </div>
+    <input type="checkbox" id="res-nav">
+    <label for="res-nav"><div></div><div></div><div></div></label>
+    <nav id="main-nav">
+        <ul>
+            <li>
+				<a href="/">Home</a>
+			</li>
+			<li class="active">
+				<a href="/posts">Posts</a>
+			</li>
+			<li>
+				<a href="/about/">About</a>
+			</li>
+			<li>
+				<a href="/tags">Tags</a>
+			</li>
+			</ul>
+    </nav>
+</div>
+</header><div id="content">
+        
+    <main>
+    <div id="content" class="container">
+    
+    <article>
+        <header>
+            <time datetime="2025-04-21 19:00:00 &#43;0000 &#43;0000">21 Apr 25 19:00 UTC</time><h1><a href="/posts/8-django-pg-enums/">Django Postgres enums</a></h1>
+        </header>
+        <section>
+        <h2 id="intro">Intro</h2>
+<p>When handling select boxes / dropdowns, in Django we use choices feature. Most times it is choices attached to <code>CharField</code> or any of integer fields. This manages the standard char/text/int
+column in the database and we see the easily rendered select boxes. It works for most cases and the reason why it&rsquo;s done this way is the Django support for multiple different database engines. In other words, a cost of universality.</p>
+<h2 id="multiple-right-choices-to-handle-choices">Multiple right choices to handle choices</h2>
+<p>For a quick reference, we talk about multiple possible approaches, for instance:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">Request</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">GET</span> <span class="o">=</span> <span class="s1">&#39;GET&#39;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">POST</span> <span class="o">=</span> <span class="s1">&#39;POST&#39;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">DELETE</span> <span class="o">=</span> <span class="s1">&#39;DELETE&#39;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">PUT</span> <span class="o">=</span> <span class="s1">&#39;PUT&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">REQUEST_TYPE_CHOICES</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">GET</span><span class="p">:</span> <span class="s1">&#39;Get&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="n">POST</span><span class="p">:</span> <span class="s1">&#39;Post&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="n">DELETE</span><span class="p">:</span> <span class="s1">&#39;Delete&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="n">PUT</span><span class="p">:</span> <span class="s1">&#39;Put&#39;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="o">...</span>
+</span></span><span class="line"><span class="cl">    <span class="n">request_type</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="n">REQUEST_TYPE_CHOICES</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">GET</span><span class="p">)</span>
+</span></span></code></pre></div><p>This works, it is solid, time-proven approach. If we put the choices out of the model, we can easily reuse across models etc. However, it is a bit rigid. Django added a different approach, using enums (actually, there were cool libraries like <code>django-choices</code> before this was implemented in Django). This gives us a bit more control.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">RequestTypeChoices</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">IntegerChoices</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">GET</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;Get&#39;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">POST</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Post&#39;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">DELETE</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;Delete&#39;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">PUT</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;Put&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">Request</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="o">...</span>
+</span></span><span class="line"><span class="cl">    <span class="n">request_type</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveSmallIntegerField</span><span class="p">(</span><span class="n">choices</span><span class="o">=</span><span class="n">RequestTypeChoices</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">RequestTypeChoices</span><span class="o">.</span><span class="n">GET</span><span class="p">)</span>
+</span></span></code></pre></div><p>There are many more features, which can be found in the official documentation <a href="https://docs.djangoproject.com/en/5.1/ref/models/fields/#enumeration-types">Enumeration types</a>. Please check out the docs for more details.</p>
+<h2 id="where-native-types-make-more-sense">Where native types make more sense</h2>
+<p>For the rest of this text, we will not take into account differences between charfields/varchars/text fields, just for simplicity. That&rsquo;s more a DBA topic.</p>
+<p>A Django project is usually a homogenous environment, where the Django deployment operates on top of its database. But in real world, we might have multiple independent apps accessing the same database. Now imagine, we used the <code>IntegerChoices</code>, our database would look like</p>
+<table>
+  <thead>
+      <tr>
+          <th>id</th>
+          <th>&hellip;</th>
+          <th>request_type</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>1</td>
+          <td>150</td>
+          <td>0</td>
+      </tr>
+      <tr>
+          <td>2</td>
+          <td>175</td>
+          <td>1</td>
+      </tr>
+      <tr>
+          <td>3</td>
+          <td>175</td>
+          <td>2</td>
+      </tr>
+  </tbody>
+</table>
+<p>On the other end, we would need to manage the number enumeration again, because we don&rsquo;t want to work with values 0, 1, 2 hardcoded all over the place. Suddenly, we have to manage two different choice approaches. And especially, without Django, we have no real constraints on the column, so we could write there value 123 which the application would accept while it was not meant to be valid (if we assume Django was the source of truth). And having multiple apps most likely means having multiple devs working with the data. Having to maintain this context across different applications.</p>
+<p>It is a bit easier with the strings like:</p>
+<table>
+  <thead>
+      <tr>
+          <th>id</th>
+          <th>&hellip;</th>
+          <th>request_type</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>1</td>
+          <td>150</td>
+          <td>GET</td>
+      </tr>
+      <tr>
+          <td>2</td>
+          <td>175</td>
+          <td>POST</td>
+      </tr>
+      <tr>
+          <td>3</td>
+          <td>175</td>
+          <td>DELETE</td>
+      </tr>
+  </tbody>
+</table>
+<p>Because it is human-readable. We however repeat a lot of text and have a low cardinality column (dang, really wanted to avoid this). Anyways, it is still vulnerable to human error, because even though Django can manage the input constraints, from DBA point of view, it is just a text column and we can write there anything. So we could end up like</p>
+<table>
+  <thead>
+      <tr>
+          <th>id</th>
+          <th>&hellip;</th>
+          <th>request_type</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>1</td>
+          <td>150</td>
+          <td>GET</td>
+      </tr>
+      <tr>
+          <td>2</td>
+          <td>175</td>
+          <td>POST</td>
+      </tr>
+      <tr>
+          <td>3</td>
+          <td>175</td>
+          <td>DELETE</td>
+      </tr>
+      <tr>
+          <td>4</td>
+          <td>150</td>
+          <td>~o_l</td>
+      </tr>
+  </tbody>
+</table>
+<p>This is, where native database enums can save us (<code>CHECK</code> constraint would do as well, for completeness).</p>
+<h2 id="postgres-enums">Postgres enums</h2>
+<p>Postgres <a href="https://www.postgresql.org/docs/current/datatype-enum.html">Enumerated Types</a> or <code>enums</code> are native types, which we can define like</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">CREATE</span><span class="w"> </span><span class="k">TYPE</span><span class="w"> </span><span class="n">request_type</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">ENUM</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;POST&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;DELETE&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;PUT&#39;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">-- and then we use it like
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">service_request</span><span class="w"> </span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="nb">SERIAL</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">request_type</span><span class="w"> </span><span class="n">request_type</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="s1">&#39;GET&#39;</span><span class="p">::</span><span class="n">request_type</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></div><p>Alright, this seems easy. But we suddenly manage the enum from outside the Django migrations. And we don&rsquo;t know, how to use this column in Django models yet.</p>
+<p>Without complex workarounds, migratins enums is not straightforward, we will begin with a manual migration.</p>
+<h3 id="sample-project">Sample project</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">mkdir /where/ever/we/need/to
+</span></span><span class="line"><span class="cl"><span class="nb">cd</span> /where/ever/we/need/to
+</span></span><span class="line"><span class="cl">uv init
+</span></span><span class="line"><span class="cl">uv add django psycopg
+</span></span><span class="line"><span class="cl">uv run django-admin startproject enumtest
+</span></span></code></pre></div><p>We will need a postgres database, so we created a db called <code>enumtest</code> and edited <code>enumtest/enumtest/settings.py</code> adding the db credentials.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="nb">cd</span> enumtest
+</span></span><span class="line"><span class="cl">uv run ./manage.py startapp services
+</span></span></code></pre></div><p>We then add the <code>services</code> to <code>INSTALLED_APPS</code> in the <code>settings.py</code> file.</p>
+<p>Now, let&rsquo;s see what we need to add to <code>services/models.py</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">PgEnumField</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Field</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">enum_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">NOT_PROVIDED</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">enum_name</span> <span class="o">=</span> <span class="n">enum_name</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">choices</span> <span class="o">=</span> <span class="n">choices</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">default</span> <span class="o">=</span> <span class="n">default</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">choices</span><span class="o">=</span><span class="n">choices</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">db_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="sa">f</span><span class="s2">&#34;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">enum_name</span><span class="si">}</span><span class="s2"> DEFAULT &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">default</span><span class="si">}</span><span class="s2">&#39;&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">enum_name</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">RequestTypeChoices</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">TextChoices</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">GET</span> <span class="o">=</span> <span class="s1">&#39;Get&#39;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">POST</span> <span class="o">=</span> <span class="s1">&#39;Post&#39;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">DELETE</span> <span class="o">=</span> <span class="s1">&#39;Delete&#39;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">PUT</span> <span class="o">=</span> <span class="s1">&#39;Put&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">Request</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">millis</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">150</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">request_type</span> <span class="o">=</span> <span class="n">PgEnumField</span><span class="p">(</span><span class="n">enum_name</span><span class="o">=</span><span class="s1">&#39;request_type&#39;</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="n">RequestTypeChoices</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">RequestTypeChoices</span><span class="o">.</span><span class="n">GET</span><span class="p">)</span>
+</span></span></code></pre></div><p>To maintain the Django expectations, we will first create empty migration:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">uv run ./manage.py makemigrations services --empty
+</span></span><span class="line"><span class="cl">Migrations <span class="k">for</span> <span class="s1">&#39;services&#39;</span>:
+</span></span><span class="line"><span class="cl">  services/migrations/0001_initial.py
+</span></span></code></pre></div><p>We edit the migration file, adding:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">migrations</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">Migration</span><span class="p">(</span><span class="n">migrations</span><span class="o">.</span><span class="n">Migration</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">    <span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">operations</span> <span class="o">=</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">        <span class="n">migrations</span><span class="o">.</span><span class="n">RunSQL</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">            <span class="n">sql</span><span class="o">=</span><span class="p">[</span>
+</span></span><span class="line"><span class="cl">                <span class="s2">&#34;CREATE TYPE request_type AS ENUM (&#39;GET&#39;, &#39;POST&#39;, &#39;DELETE&#39;, &#39;PUT&#39;);&#34;</span>
+</span></span><span class="line"><span class="cl">            <span class="p">],</span>
+</span></span><span class="line"><span class="cl">            <span class="n">reverse_sql</span><span class="o">=</span><span class="p">[</span>
+</span></span><span class="line"><span class="cl">                <span class="s2">&#34;DROP TYPE request_type;&#34;</span>
+</span></span><span class="line"><span class="cl">            <span class="p">]</span>
+</span></span><span class="line"><span class="cl">        <span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">]</span>
+</span></span></code></pre></div><p>Now, we create migration for the model:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">uv run ./manage.py makemigrations services
+</span></span></code></pre></div><p>We finally migrate everything:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">uv run ./manage.py migrate
+</span></span></code></pre></div><p>Now, what&rsquo;s left is admin:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">django.contrib</span> <span class="kn">import</span> <span class="n">admin</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">Request</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nd">@admin.register</span><span class="p">(</span><span class="n">Request</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">RequestAdmin</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">ModelAdmin</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">pass</span>
+</span></span></code></pre></div><p>Let&rsquo;s verify that it works:</p>
+<p><img src="/image/008/1-django-add-service-form.png" alt="Django Add Service Form"></p>
+<p>And the saved record:</p>
+<p><img src="/image/008/2-database-output.png" alt="Database output"></p>
+<h2 id="outro">Outro</h2>
+<p>This is not very common issue to be solved. It is useful if we access the same database from different apps or we build Django app on top of existing database and don&rsquo;t want to drastically rewrite everything.</p>
+
+        </section>
+        
+        
+        <section>
+            <h3>Tags</h3>
+            <ul class="tags">
+                
+                    <li><a class="tag-link" href="https://sukovsky.com/tags/django/">Django</a></li>
+            
+                    <li><a class="tag-link" href="https://sukovsky.com/tags/postgres/">Postgres</a></li>
+            
+                    <li><a class="tag-link" href="https://sukovsky.com/tags/enum/">Enum</a></li>
+            
+            </ul>
+        </section>
+        
+    </article>
+   
+    </div>
+    </main>
+</div>
+        <footer>
+<div id="footer" class="container">
+<div class="grad-divider"></div>
+    <nav>
+        <div>2025  © Jozef Sukovsky. <a target="_blank" href="https://github.com/jozefsukovsky">Github</a>. <a target="_blank" href="https://twitter.com/jozefsukovsky">Twitter</a>. <a target="_blank" href="https://www.linkedin.com/in/jozefsukovsky/">Linkedin</a>. <a target="_blank" href="/index.xml">RSS</a>. </div>
+        <div><a target="_blank" href="https://github.com/jozefsukovsky/hugo-cyberton">Cyberton</a> theme on&nbsp;<a target="_blank" href="https://gohugo.io">Hugo</a>.</div>
+    </nav>
+</div>
+</footer></body>
+</html>

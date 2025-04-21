@@ -7,8 +7,15 @@
     <generator>Hugo</generator>
     <language>en-us</language>
     <copyright>© Jozef Sukovsky</copyright>
-    <lastBuildDate>Wed, 26 Feb 2025 21:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 21 Apr 2025 19:00:00 +0000</lastBuildDate>
     <atom:link href="https://sukovsky.com/tags/django/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Django Postgres enums</title>
+      <link>https://sukovsky.com/posts/8-django-pg-enums/</link>
+      <pubDate>Mon, 21 Apr 2025 19:00:00 +0000</pubDate>
+      <guid>https://sukovsky.com/posts/8-django-pg-enums/</guid>
+      <description>&lt;h2 id=&#34;intro&#34;&gt;Intro&lt;/h2&gt;&#xA;&lt;p&gt;When handling select boxes / dropdowns, in Django we use choices feature. Most times it is choices attached to &lt;code&gt;CharField&lt;/code&gt; or any of integer fields. This manages the standard char/text/int&#xA;column in the database and we see the easily rendered select boxes. It works for most cases and the reason why it&amp;rsquo;s done this way is the Django support for multiple different database engines. In other words, a cost of universality.&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Splitting Django authentication between public and internal interfaces</title>
       <link>https://sukovsky.com/posts/7-django-split-roles/</link>

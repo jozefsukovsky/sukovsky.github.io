@@ -7,8 +7,29 @@
     <generator>Hugo</generator>
     <language>en-us</language>
     <copyright>© Jozef Sukovsky</copyright>
-    <lastBuildDate>Wed, 26 Feb 2025 21:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 21 Apr 2025 19:00:00 +0000</lastBuildDate>
     <atom:link href="https://sukovsky.com/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Django</title>
+      <link>https://sukovsky.com/tags/django/</link>
+      <pubDate>Mon, 21 Apr 2025 19:00:00 +0000</pubDate>
+      <guid>https://sukovsky.com/tags/django/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Enum</title>
+      <link>https://sukovsky.com/tags/enum/</link>
+      <pubDate>Mon, 21 Apr 2025 19:00:00 +0000</pubDate>
+      <guid>https://sukovsky.com/tags/enum/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Postgres</title>
+      <link>https://sukovsky.com/tags/postgres/</link>
+      <pubDate>Mon, 21 Apr 2025 19:00:00 +0000</pubDate>
+      <guid>https://sukovsky.com/tags/postgres/</guid>
+      <description></description>
+    </item>
     <item>
       <title>Authentication</title>
       <link>https://sukovsky.com/tags/authentication/</link>
@@ -21,13 +42,6 @@
       <link>https://sukovsky.com/tags/authorization/</link>
       <pubDate>Wed, 26 Feb 2025 21:00:00 +0000</pubDate>
       <guid>https://sukovsky.com/tags/authorization/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>Django</title>
-      <link>https://sukovsky.com/tags/django/</link>
-      <pubDate>Wed, 26 Feb 2025 21:00:00 +0000</pubDate>
-      <guid>https://sukovsky.com/tags/django/</guid>
       <description></description>
     </item>
     <item>
