@@ -1,20 +1,41 @@
 <!DOCTYPE html>
-<html>
-    <head>
-	<meta charset="utf-8" />
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Splitting Django authentication between public and internal interfaces - Jozef Sukovsky</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	    
-    <meta name="twitter:card" content="How to split Django authentication between public and internal interfaces" />
-    <meta name="twitter:creator" content="@jozefsukovsky"/>
-    <meta property="og:url" content="https://sukovsky.com/posts/7-django-split-roles/" />
-    <meta property="og:title" content="Splitting Django authentication between public and internal interfaces" />
-    <meta property="og:description" content="How to split Django authentication between public and internal interfaces" />
-	<link rel="stylesheet" type="text/css" media="screen" href="https://sukovsky.com/css/normalize.css" />
-	<link rel="stylesheet" type="text/css" media="screen" href="https://sukovsky.com/css/syntax.css" />
-	<link rel="stylesheet" type="text/css" media="screen" href="https://sukovsky.com/css/cyberton.css" />
-</head><body><div class="grad-divider">
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Splitting Django authentication between public and internal interfaces - Jozef Sukovsky</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+<meta name="description" content="How to split Django authentication between public and internal interfaces" />
+<meta name="twitter:card" content="How to split Django authentication between public and internal interfaces" />
+<meta
+  name="twitter:creator"
+  content="@jozefsukovsky"
+/>
+<meta property="og:url" content="https://sukovsky.com/posts/7-django-split-roles/" />
+<meta property="og:title" content="Splitting Django authentication between public and internal interfaces" />
+<meta property="og:description" content="How to split Django authentication between public and internal interfaces" />
+
+  <link
+    rel="stylesheet"
+    type="text/css"
+    media="screen"
+    href="https://sukovsky.com/css/normalize.css"
+  />
+  <link
+    rel="stylesheet"
+    type="text/css"
+    media="screen"
+    href="https://sukovsky.com/css/syntax.css"
+  />
+  <link
+    rel="stylesheet"
+    type="text/css"
+    media="screen"
+    href="https://sukovsky.com/css/cyberton.css"
+  />
+</head>
+<body><div class="grad-divider">
 <header>
 <div id="header" class="container">
     <div class="branding">
@@ -43,16 +64,20 @@
     </nav>
 </div>
 </header><div id="content">
-        
-    <main>
-    <div id="content" class="container">
-    
+<main>
+  <div id="content" class="container">
     <article>
-        <header>
-            <time datetime="2025-02-26 21:00:00 &#43;0000 &#43;0000">26 Feb 25 21:00 UTC</time><h1><a href="/posts/7-django-split-roles/">Splitting Django authentication between public and internal interfaces</a></h1>
-        </header>
-        <section>
-        <h2 id="intro">Intro</h2>
+      <header>
+        <time datetime="2025-02-26 21:00:00 &#43;0000 &#43;0000"
+          >26 Feb 25 21:00 UTC</time
+        ><h1>
+          <a href="/posts/7-django-split-roles/"
+            >Splitting Django authentication between public and internal interfaces</a
+          >
+        </h1>
+        <button id="copyLinkBtn">Copy link</button>
+      </header>
+      <section><h2 id="intro">Intro</h2>
 <p>Probably the most used Django feature is the admin. It&rsquo;s rated as the most useful feature according to the <a href="https://lp.jetbrains.com/django-developer-survey-2023/#django-usage">Annual Django Survey</a>. It helps to bring content management up to speed and with some love and effort, we can build rich management platforms with it.</p>
 <h2 id="the-challenge">The challenge</h2>
 <p>Django admin has a single users table, single session management and a single set of roles (users, groups, permissions). Public facing apps often leave the <code>/admin</code> available to the world. This is still bearable, but it brings some overhead to assuring the authorization is done right. Of course, MFA helps a bit, but that&rsquo;s not a silver bullet.</p>
@@ -338,29 +363,32 @@ for most cases. But in case we plan to work with the direct imports somewhere, w
 <p>This is one of the options how to approach complete separation of users between the internal management and public facing app. One of the limitations of this approach is that we completely skipped groups and permissions. In case you want to use the built-in RBAC, this solution won&rsquo;t work for you as is.</p>
 <p>Please take this as a part of puzzle which you can build on top of. But you still need to approach it with caution as any work related to authentication and authorization.</p>
 <p>You can find the complete example in <a href="https://github.com/jozefsukovsky/article-materials/tree/main/007_django_split_auth">Github</a></p>
-
-        </section>
-        
-        
-        <section>
-            <h3>Tags</h3>
-            <ul class="tags">
-                
-                    <li><a class="tag-link" href="https://sukovsky.com/tags/django/">Django</a></li>
-            
-                    <li><a class="tag-link" href="https://sukovsky.com/tags/authentication/">Authentication</a></li>
-            
-                    <li><a class="tag-link" href="https://sukovsky.com/tags/authorization/">Authorization</a></li>
-            
-            </ul>
-        </section>
-        
+</section>
+       
+      <section>
+        <h3>Tags</h3>
+        <ul class="tags">
+          
+          <li>
+            <a class="tag-link" href="https://sukovsky.com/tags/django/">Django</a>
+          </li>
+          
+          <li>
+            <a class="tag-link" href="https://sukovsky.com/tags/authentication/">Authentication</a>
+          </li>
+          
+          <li>
+            <a class="tag-link" href="https://sukovsky.com/tags/authorization/">Authorization</a>
+          </li>
+          
+        </ul>
+      </section>
+      
     </article>
-   
-    </div>
-    </main>
+  </div>
+</main>
 </div>
-        <footer>
+    <footer>
 <div id="footer" class="container">
 <div class="grad-divider"></div>
     <nav>

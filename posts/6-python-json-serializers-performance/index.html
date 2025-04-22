@@ -1,20 +1,41 @@
 <!DOCTYPE html>
-<html>
-    <head>
-	<meta charset="utf-8" />
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Python JSON de/serialization speed-up and its impact on Django performance - Jozef Sukovsky</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	    
-    <meta name="twitter:card" content="What can we gain from different non-standard JSON libraries in Python" />
-    <meta name="twitter:creator" content="@jozefsukovsky"/>
-    <meta property="og:url" content="https://sukovsky.com/posts/6-python-json-serializers-performance/" />
-    <meta property="og:title" content="Python JSON de/serialization speed-up and its impact on Django performance" />
-    <meta property="og:description" content="What can we gain from different non-standard JSON libraries in Python" />
-	<link rel="stylesheet" type="text/css" media="screen" href="https://sukovsky.com/css/normalize.css" />
-	<link rel="stylesheet" type="text/css" media="screen" href="https://sukovsky.com/css/syntax.css" />
-	<link rel="stylesheet" type="text/css" media="screen" href="https://sukovsky.com/css/cyberton.css" />
-</head><body><div class="grad-divider">
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Python JSON de/serialization speed-up and its impact on Django performance - Jozef Sukovsky</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+<meta name="description" content="What can we gain from different non-standard JSON libraries in Python" />
+<meta name="twitter:card" content="What can we gain from different non-standard JSON libraries in Python" />
+<meta
+  name="twitter:creator"
+  content="@jozefsukovsky"
+/>
+<meta property="og:url" content="https://sukovsky.com/posts/6-python-json-serializers-performance/" />
+<meta property="og:title" content="Python JSON de/serialization speed-up and its impact on Django performance" />
+<meta property="og:description" content="What can we gain from different non-standard JSON libraries in Python" />
+
+  <link
+    rel="stylesheet"
+    type="text/css"
+    media="screen"
+    href="https://sukovsky.com/css/normalize.css"
+  />
+  <link
+    rel="stylesheet"
+    type="text/css"
+    media="screen"
+    href="https://sukovsky.com/css/syntax.css"
+  />
+  <link
+    rel="stylesheet"
+    type="text/css"
+    media="screen"
+    href="https://sukovsky.com/css/cyberton.css"
+  />
+</head>
+<body><div class="grad-divider">
 <header>
 <div id="header" class="container">
     <div class="branding">
@@ -43,16 +64,20 @@
     </nav>
 </div>
 </header><div id="content">
-        
-    <main>
-    <div id="content" class="container">
-    
+<main>
+  <div id="content" class="container">
     <article>
-        <header>
-            <time datetime="2024-05-09 19:00:00 &#43;0000 &#43;0000">09 May 24 19:00 UTC</time><h1><a href="/posts/6-python-json-serializers-performance/">Python JSON de/serialization speed-up and its impact on Django performance</a></h1>
-        </header>
-        <section>
-        <h2 id="intro">Intro</h2>
+      <header>
+        <time datetime="2024-05-09 19:00:00 &#43;0000 &#43;0000"
+          >09 May 24 19:00 UTC</time
+        ><h1>
+          <a href="/posts/6-python-json-serializers-performance/"
+            >Python JSON de/serialization speed-up and its impact on Django performance</a
+          >
+        </h1>
+        <button id="copyLinkBtn">Copy link</button>
+      </header>
+      <section><h2 id="intro">Intro</h2>
 <p>This is a non-direct follow-up to <a href="https://sukovsky.com/posts/5-stress-testing-django-drf-fastapi-expressjs-go-chi-axum/" title="article">Stress-testing Django, Django REST framework, FastAPI, Express.js, Go-chi and Axum</a>.</p>
 <p>The question we will answer is, how much can we squeeze from Django replacing the native json library. For most cases, standard json library does good enough. But sometimes, when we deal with huge payloads, it may be beneficial to do differently. In this article, we shall compare <code>json</code>, <code>simplejson</code>, <code>orjson</code>, <code>python-rapidjson</code>, <code>ultrajson</code>. Overall, there were some more, like <code>hyperjson</code>, <code>perde</code>, but such were already abandoned, or <code>pyserde</code> which I decided not to test because of a different usage pattern and the performance for this purpose wasn&rsquo;t impressive. Once we find the winner, we will replace the JsonResponse from the test setup from previous article and re-run the brute force load test.</p>
 <p>It is important to emphasize that we are only comparing the serialization and deserialization performance of these libraries, even though many of them offer additional features beyond this scope.</p>
@@ -414,31 +439,36 @@
 <p><img src="/image/006/longest_transaction_v2.svg" alt="Longest Transaction plot"></p>
 <h2 id="outro">Outro</h2>
 <p>Do we need to change the standard library? If not sure, probably not. Most times, the bottleneck will be somewhere else, but if we serialize/deserialize plenty of data, considering a drop-in replacement is worth it. We need to take in account that this change solves only a single case/problem and doesn&rsquo;t mean it will bring us magic gains in all circumstances.</p>
-
-        </section>
-        
-        
-        <section>
-            <h3>Tags</h3>
-            <ul class="tags">
-                
-                    <li><a class="tag-link" href="https://sukovsky.com/tags/json/">Json</a></li>
-            
-                    <li><a class="tag-link" href="https://sukovsky.com/tags/serialization/">Serialization</a></li>
-            
-                    <li><a class="tag-link" href="https://sukovsky.com/tags/python/">Python</a></li>
-            
-                    <li><a class="tag-link" href="https://sukovsky.com/tags/performance/">Performance</a></li>
-            
-            </ul>
-        </section>
-        
+</section>
+       
+      <section>
+        <h3>Tags</h3>
+        <ul class="tags">
+          
+          <li>
+            <a class="tag-link" href="https://sukovsky.com/tags/json/">Json</a>
+          </li>
+          
+          <li>
+            <a class="tag-link" href="https://sukovsky.com/tags/serialization/">Serialization</a>
+          </li>
+          
+          <li>
+            <a class="tag-link" href="https://sukovsky.com/tags/python/">Python</a>
+          </li>
+          
+          <li>
+            <a class="tag-link" href="https://sukovsky.com/tags/performance/">Performance</a>
+          </li>
+          
+        </ul>
+      </section>
+      
     </article>
-   
-    </div>
-    </main>
+  </div>
+</main>
 </div>
-        <footer>
+    <footer>
 <div id="footer" class="container">
 <div class="grad-divider"></div>
     <nav>

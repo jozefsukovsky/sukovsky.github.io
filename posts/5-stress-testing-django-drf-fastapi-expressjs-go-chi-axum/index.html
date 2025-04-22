@@ -1,20 +1,41 @@
 <!DOCTYPE html>
-<html>
-    <head>
-	<meta charset="utf-8" />
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Stress-testing Django, Django REST framework, FastAPI, Express.js, Go-chi and Axum - Jozef Sukovsky</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	    
-    <meta name="twitter:card" content="Comparing apples with pears, plums and other fruits to get an idea of the capacity" />
-    <meta name="twitter:creator" content="@jozefsukovsky"/>
-    <meta property="og:url" content="https://sukovsky.com/posts/5-stress-testing-django-drf-fastapi-expressjs-go-chi-axum/" />
-    <meta property="og:title" content="Stress-testing Django, Django REST framework, FastAPI, Express.js, Go-chi and Axum" />
-    <meta property="og:description" content="Comparing apples with pears, plums and other fruits to get an idea of the capacity" />
-	<link rel="stylesheet" type="text/css" media="screen" href="https://sukovsky.com/css/normalize.css" />
-	<link rel="stylesheet" type="text/css" media="screen" href="https://sukovsky.com/css/syntax.css" />
-	<link rel="stylesheet" type="text/css" media="screen" href="https://sukovsky.com/css/cyberton.css" />
-</head><body><div class="grad-divider">
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Stress-testing Django, Django REST framework, FastAPI, Express.js, Go-chi and Axum - Jozef Sukovsky</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+<meta name="description" content="Comparing apples with pears, plums and other fruits to get an idea of the capacity" />
+<meta name="twitter:card" content="Comparing apples with pears, plums and other fruits to get an idea of the capacity" />
+<meta
+  name="twitter:creator"
+  content="@jozefsukovsky"
+/>
+<meta property="og:url" content="https://sukovsky.com/posts/5-stress-testing-django-drf-fastapi-expressjs-go-chi-axum/" />
+<meta property="og:title" content="Stress-testing Django, Django REST framework, FastAPI, Express.js, Go-chi and Axum" />
+<meta property="og:description" content="Comparing apples with pears, plums and other fruits to get an idea of the capacity" />
+
+  <link
+    rel="stylesheet"
+    type="text/css"
+    media="screen"
+    href="https://sukovsky.com/css/normalize.css"
+  />
+  <link
+    rel="stylesheet"
+    type="text/css"
+    media="screen"
+    href="https://sukovsky.com/css/syntax.css"
+  />
+  <link
+    rel="stylesheet"
+    type="text/css"
+    media="screen"
+    href="https://sukovsky.com/css/cyberton.css"
+  />
+</head>
+<body><div class="grad-divider">
 <header>
 <div id="header" class="container">
     <div class="branding">
@@ -43,16 +64,20 @@
     </nav>
 </div>
 </header><div id="content">
-        
-    <main>
-    <div id="content" class="container">
-    
+<main>
+  <div id="content" class="container">
     <article>
-        <header>
-            <time datetime="2024-03-20 19:20:00 &#43;0000 &#43;0000">20 Mar 24 19:20 UTC</time><h1><a href="/posts/5-stress-testing-django-drf-fastapi-expressjs-go-chi-axum/">Stress-testing Django, Django REST framework, FastAPI, Express.js, Go-chi and Axum</a></h1>
-        </header>
-        <section>
-        <h2 id="intro">Intro</h2>
+      <header>
+        <time datetime="2024-03-20 19:20:00 &#43;0000 &#43;0000"
+          >20 Mar 24 19:20 UTC</time
+        ><h1>
+          <a href="/posts/5-stress-testing-django-drf-fastapi-expressjs-go-chi-axum/"
+            >Stress-testing Django, Django REST framework, FastAPI, Express.js, Go-chi and Axum</a
+          >
+        </h1>
+        <button id="copyLinkBtn">Copy link</button>
+      </header>
+      <section><h2 id="intro">Intro</h2>
 <p>While working with different stack combinations, I sometimes wonder about the true throughput/performance of each solution. It is not straightforward to compare them because every product is unique and possesses different features and design choices. However, some things can still be compared, even though not everything will be a fair comparison. This will be comparing apples with pears, plums and other fruits to get an idea of the capacity.</p>
 <h2 id="updates">Updates</h2>
 <p>2024-03-21 - Based on <a href="https://twitter.com/cosmastech/status/1770812045903950333">this</a> comment, I changed the FastAPI code to async approach and re-run tests</p>
@@ -593,45 +618,64 @@ managing the connection pool differently to not exhaust all the available server
 <p>The true surprise, however, lies in the longest transaction response times from Go-chi and Axum. My assumption is that this is by design - the apps are multithreaded and manage the threads. Whereas, in other cases, I was just smashing the app and could roll this until it went out of memory. To explain this, I would need a different testing approach and collect more data - e.g., all response times to see how (un)stable the apps really are.</p>
 <p>This simple exercise brought many more questions (How would uWSGI perform over Gunicorn? How would FastAPI behave if asyncio was used instead of uvloop? How long until the app would eat all available memory without respawn, etc.). I will pick some for future articles.</p>
 <p>Source code used for testing is published <a href="https://github.com/jozefsukovsky/article-materials/tree/main/005_diff_api_perf">here</a></p>
-
-        </section>
-        
-        
-        <section>
-            <h3>Tags</h3>
-            <ul class="tags">
-                
-                    <li><a class="tag-link" href="https://sukovsky.com/tags/rest/">Rest</a></li>
-            
-                    <li><a class="tag-link" href="https://sukovsky.com/tags/api/">Api</a></li>
-            
-                    <li><a class="tag-link" href="https://sukovsky.com/tags/django/">Django</a></li>
-            
-                    <li><a class="tag-link" href="https://sukovsky.com/tags/drf/">Drf</a></li>
-            
-                    <li><a class="tag-link" href="https://sukovsky.com/tags/fastapi/">Fastapi</a></li>
-            
-                    <li><a class="tag-link" href="https://sukovsky.com/tags/expressjs/">Expressjs</a></li>
-            
-                    <li><a class="tag-link" href="https://sukovsky.com/tags/go-chi/">Go-Chi</a></li>
-            
-                    <li><a class="tag-link" href="https://sukovsky.com/tags/axum/">Axum</a></li>
-            
-                    <li><a class="tag-link" href="https://sukovsky.com/tags/sqlalchemy/">Sqlalchemy</a></li>
-            
-                    <li><a class="tag-link" href="https://sukovsky.com/tags/gorm/">Gorm</a></li>
-            
-                    <li><a class="tag-link" href="https://sukovsky.com/tags/sqlx/">Sqlx</a></li>
-            
-            </ul>
-        </section>
-        
+</section>
+       
+      <section>
+        <h3>Tags</h3>
+        <ul class="tags">
+          
+          <li>
+            <a class="tag-link" href="https://sukovsky.com/tags/rest/">Rest</a>
+          </li>
+          
+          <li>
+            <a class="tag-link" href="https://sukovsky.com/tags/api/">Api</a>
+          </li>
+          
+          <li>
+            <a class="tag-link" href="https://sukovsky.com/tags/django/">Django</a>
+          </li>
+          
+          <li>
+            <a class="tag-link" href="https://sukovsky.com/tags/drf/">Drf</a>
+          </li>
+          
+          <li>
+            <a class="tag-link" href="https://sukovsky.com/tags/fastapi/">Fastapi</a>
+          </li>
+          
+          <li>
+            <a class="tag-link" href="https://sukovsky.com/tags/expressjs/">Expressjs</a>
+          </li>
+          
+          <li>
+            <a class="tag-link" href="https://sukovsky.com/tags/go-chi/">Go-Chi</a>
+          </li>
+          
+          <li>
+            <a class="tag-link" href="https://sukovsky.com/tags/axum/">Axum</a>
+          </li>
+          
+          <li>
+            <a class="tag-link" href="https://sukovsky.com/tags/sqlalchemy/">Sqlalchemy</a>
+          </li>
+          
+          <li>
+            <a class="tag-link" href="https://sukovsky.com/tags/gorm/">Gorm</a>
+          </li>
+          
+          <li>
+            <a class="tag-link" href="https://sukovsky.com/tags/sqlx/">Sqlx</a>
+          </li>
+          
+        </ul>
+      </section>
+      
     </article>
-   
-    </div>
-    </main>
+  </div>
+</main>
 </div>
-        <footer>
+    <footer>
 <div id="footer" class="container">
 <div class="grad-divider"></div>
     <nav>

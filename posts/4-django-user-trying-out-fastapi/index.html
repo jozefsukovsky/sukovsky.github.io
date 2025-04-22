@@ -1,20 +1,41 @@
 <!DOCTYPE html>
-<html>
-    <head>
-	<meta charset="utf-8" />
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Django user trying out FastAPI - Jozef Sukovsky</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	    
-    <meta name="twitter:card" content="Django user trying out FastAPI" />
-    <meta name="twitter:creator" content="@jozefsukovsky"/>
-    <meta property="og:url" content="https://sukovsky.com/posts/4-django-user-trying-out-fastapi/" />
-    <meta property="og:title" content="Django user trying out FastAPI" />
-    <meta property="og:description" content="Django user trying out FastAPI" />
-	<link rel="stylesheet" type="text/css" media="screen" href="https://sukovsky.com/css/normalize.css" />
-	<link rel="stylesheet" type="text/css" media="screen" href="https://sukovsky.com/css/syntax.css" />
-	<link rel="stylesheet" type="text/css" media="screen" href="https://sukovsky.com/css/cyberton.css" />
-</head><body><div class="grad-divider">
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Django user trying out FastAPI - Jozef Sukovsky</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+<meta name="description" content="Django user trying out FastAPI" />
+<meta name="twitter:card" content="Django user trying out FastAPI" />
+<meta
+  name="twitter:creator"
+  content="@jozefsukovsky"
+/>
+<meta property="og:url" content="https://sukovsky.com/posts/4-django-user-trying-out-fastapi/" />
+<meta property="og:title" content="Django user trying out FastAPI" />
+<meta property="og:description" content="Django user trying out FastAPI" />
+
+  <link
+    rel="stylesheet"
+    type="text/css"
+    media="screen"
+    href="https://sukovsky.com/css/normalize.css"
+  />
+  <link
+    rel="stylesheet"
+    type="text/css"
+    media="screen"
+    href="https://sukovsky.com/css/syntax.css"
+  />
+  <link
+    rel="stylesheet"
+    type="text/css"
+    media="screen"
+    href="https://sukovsky.com/css/cyberton.css"
+  />
+</head>
+<body><div class="grad-divider">
 <header>
 <div id="header" class="container">
     <div class="branding">
@@ -43,16 +64,20 @@
     </nav>
 </div>
 </header><div id="content">
-        
-    <main>
-    <div id="content" class="container">
-    
+<main>
+  <div id="content" class="container">
     <article>
-        <header>
-            <time datetime="2021-05-27 20:20:00 &#43;0000 &#43;0000">27 May 21 20:20 UTC</time><h1><a href="/posts/4-django-user-trying-out-fastapi/">Django user trying out FastAPI</a></h1>
-        </header>
-        <section>
-        <p>Django was my first choice for many years. But building new API-driven products using Django and Django REST Framework never brought that pleasing feeling I would like to feel.</p>
+      <header>
+        <time datetime="2021-05-27 20:20:00 &#43;0000 &#43;0000"
+          >27 May 21 20:20 UTC</time
+        ><h1>
+          <a href="/posts/4-django-user-trying-out-fastapi/"
+            >Django user trying out FastAPI</a
+          >
+        </h1>
+        <button id="copyLinkBtn">Copy link</button>
+      </header>
+      <section><p>Django was my first choice for many years. But building new API-driven products using Django and Django REST Framework never brought that pleasing feeling I would like to feel.</p>
 <h2 id="the-good-the-bad-and-the-ugly">The Good, the Bad and the Ugly</h2>
 <p>It&rsquo;s been around 2007 I stumbled upon <a href="https://www.djangoproject.com/">Django framework</a>. Needed to build a very simple image gallery, nothing serious. And since then, every time I had to do something to be displayed on the web, Django was my first choice. What was a big deal for me was it&rsquo;s ORM, <code>contrib.auth</code> and <code>contrib.admin</code>. Going up with and running in minutes, having some database models done really fast and being able to fill the tables with some test data right away was always a pleasing experience.</p>
 <p>As time fled, things started to change. <a href="https://en.wikipedia.org/wiki/Ajax_(programming)">AJAX</a>, <a href="https://en.wikipedia.org/wiki/Unobtrusive_JavaScript">Unobtrusive JavaScript</a>, first <a href="https://en.wikipedia.org/wiki/Single-page_application">Single-page applications</a> been gaining popularity, until we arrived at the destination <a href="https://nodejs.org/en/">node.js</a> as a daily bread. What caused APIs to be the more and more popular choice not only for consumer apps but for almost everything. For many products, going SPA is a good choice, no matter it still runs on the same JavaScript and all its ugliness is just abstracted with multiple levels on top of it.</p>
@@ -526,39 +551,52 @@
 </span></span></code></pre></div><p>Finally, opening http://localhost:8282/docs in browser will bring us something like <img src="/image/004/02_fastapi.png" alt="FastAPI"></p>
 <h2 id="conclusion">Conclusion</h2>
 <p>I did not find a 1:1 Django replacement. The most painful part is something similar to Django admin, if such feature is a product requirement. Choosing different approaches, there is a nice looking app called <a href="https://github.com/fastapi-admin/fastapi-admin">FastAPI Admin</a>. Which uses <a href="https://github.com/tortoise/tortoise-orm/">TortoiseORM</a> and is directly inspired by Django admin. Haven&rsquo;t tried yet.</p>
-
-        </section>
-        
-        
-        <section>
-            <h3>Tags</h3>
-            <ul class="tags">
-                
-                    <li><a class="tag-link" href="https://sukovsky.com/tags/django/">Django</a></li>
-            
-                    <li><a class="tag-link" href="https://sukovsky.com/tags/fastapi/">Fastapi</a></li>
-            
-                    <li><a class="tag-link" href="https://sukovsky.com/tags/python/">Python</a></li>
-            
-                    <li><a class="tag-link" href="https://sukovsky.com/tags/falcon/">Falcon</a></li>
-            
-                    <li><a class="tag-link" href="https://sukovsky.com/tags/sqlalchemy/">Sqlalchemy</a></li>
-            
-                    <li><a class="tag-link" href="https://sukovsky.com/tags/flask/">Flask</a></li>
-            
-                    <li><a class="tag-link" href="https://sukovsky.com/tags/hug/">Hug</a></li>
-            
-                    <li><a class="tag-link" href="https://sukovsky.com/tags/pydantic/">Pydantic</a></li>
-            
-            </ul>
-        </section>
-        
+</section>
+       
+      <section>
+        <h3>Tags</h3>
+        <ul class="tags">
+          
+          <li>
+            <a class="tag-link" href="https://sukovsky.com/tags/django/">Django</a>
+          </li>
+          
+          <li>
+            <a class="tag-link" href="https://sukovsky.com/tags/fastapi/">Fastapi</a>
+          </li>
+          
+          <li>
+            <a class="tag-link" href="https://sukovsky.com/tags/python/">Python</a>
+          </li>
+          
+          <li>
+            <a class="tag-link" href="https://sukovsky.com/tags/falcon/">Falcon</a>
+          </li>
+          
+          <li>
+            <a class="tag-link" href="https://sukovsky.com/tags/sqlalchemy/">Sqlalchemy</a>
+          </li>
+          
+          <li>
+            <a class="tag-link" href="https://sukovsky.com/tags/flask/">Flask</a>
+          </li>
+          
+          <li>
+            <a class="tag-link" href="https://sukovsky.com/tags/hug/">Hug</a>
+          </li>
+          
+          <li>
+            <a class="tag-link" href="https://sukovsky.com/tags/pydantic/">Pydantic</a>
+          </li>
+          
+        </ul>
+      </section>
+      
     </article>
-   
-    </div>
-    </main>
+  </div>
+</main>
 </div>
-        <footer>
+    <footer>
 <div id="footer" class="container">
 <div class="grad-divider"></div>
     <nav>

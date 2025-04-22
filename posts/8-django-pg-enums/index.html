@@ -1,20 +1,41 @@
 <!DOCTYPE html>
-<html>
-    <head>
-	<meta charset="utf-8" />
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Django Postgres enums - Jozef Sukovsky</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	    
-    <meta name="twitter:card" content="How to use native Postgres enums in Django project" />
-    <meta name="twitter:creator" content="@jozefsukovsky"/>
-    <meta property="og:url" content="https://sukovsky.com/posts/8-django-pg-enums/" />
-    <meta property="og:title" content="Django Postgres enums" />
-    <meta property="og:description" content="How to use native Postgres enums in Django project" />
-	<link rel="stylesheet" type="text/css" media="screen" href="https://sukovsky.com/css/normalize.css" />
-	<link rel="stylesheet" type="text/css" media="screen" href="https://sukovsky.com/css/syntax.css" />
-	<link rel="stylesheet" type="text/css" media="screen" href="https://sukovsky.com/css/cyberton.css" />
-</head><body><div class="grad-divider">
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Django Postgres enums - Jozef Sukovsky</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+<meta name="description" content="How to use native Postgres enums in Django project" />
+<meta name="twitter:card" content="How to use native Postgres enums in Django project" />
+<meta
+  name="twitter:creator"
+  content="@jozefsukovsky"
+/>
+<meta property="og:url" content="https://sukovsky.com/posts/8-django-pg-enums/" />
+<meta property="og:title" content="Django Postgres enums" />
+<meta property="og:description" content="How to use native Postgres enums in Django project" />
+
+  <link
+    rel="stylesheet"
+    type="text/css"
+    media="screen"
+    href="https://sukovsky.com/css/normalize.css"
+  />
+  <link
+    rel="stylesheet"
+    type="text/css"
+    media="screen"
+    href="https://sukovsky.com/css/syntax.css"
+  />
+  <link
+    rel="stylesheet"
+    type="text/css"
+    media="screen"
+    href="https://sukovsky.com/css/cyberton.css"
+  />
+</head>
+<body><div class="grad-divider">
 <header>
 <div id="header" class="container">
     <div class="branding">
@@ -43,16 +64,20 @@
     </nav>
 </div>
 </header><div id="content">
-        
-    <main>
-    <div id="content" class="container">
-    
+<main>
+  <div id="content" class="container">
     <article>
-        <header>
-            <time datetime="2025-04-21 19:00:00 &#43;0000 &#43;0000">21 Apr 25 19:00 UTC</time><h1><a href="/posts/8-django-pg-enums/">Django Postgres enums</a></h1>
-        </header>
-        <section>
-        <h2 id="intro">Intro</h2>
+      <header>
+        <time datetime="2025-04-21 19:00:00 &#43;0000 &#43;0000"
+          >21 Apr 25 19:00 UTC</time
+        ><h1>
+          <a href="/posts/8-django-pg-enums/"
+            >Django Postgres enums</a
+          >
+        </h1>
+        <button id="copyLinkBtn">Copy link</button>
+      </header>
+      <section><h2 id="intro">Intro</h2>
 <p>When handling select boxes / dropdowns, in Django we use choices feature. Most times it is choices attached to <code>CharField</code> or any of integer fields. This manages the standard char/text/int
 column in the database and we see the easily rendered select boxes. It works for most cases and the reason why it&rsquo;s done this way is the Django support for multiple different database engines. In other words, a cost of universality.</p>
 <h2 id="multiple-right-choices-to-handle-choices">Multiple right choices to handle choices</h2>
@@ -271,29 +296,32 @@ column in the database and we see the easily rendered select boxes. It works for
 <p><img src="/image/008/2-database-output.png" alt="Database output"></p>
 <h2 id="outro">Outro</h2>
 <p>This is not very common issue to be solved. It is useful if we access the same database from different apps or we build Django app on top of existing database and don&rsquo;t want to drastically rewrite everything.</p>
-
-        </section>
-        
-        
-        <section>
-            <h3>Tags</h3>
-            <ul class="tags">
-                
-                    <li><a class="tag-link" href="https://sukovsky.com/tags/django/">Django</a></li>
-            
-                    <li><a class="tag-link" href="https://sukovsky.com/tags/postgres/">Postgres</a></li>
-            
-                    <li><a class="tag-link" href="https://sukovsky.com/tags/enum/">Enum</a></li>
-            
-            </ul>
-        </section>
-        
+</section>
+       
+      <section>
+        <h3>Tags</h3>
+        <ul class="tags">
+          
+          <li>
+            <a class="tag-link" href="https://sukovsky.com/tags/django/">Django</a>
+          </li>
+          
+          <li>
+            <a class="tag-link" href="https://sukovsky.com/tags/postgres/">Postgres</a>
+          </li>
+          
+          <li>
+            <a class="tag-link" href="https://sukovsky.com/tags/enum/">Enum</a>
+          </li>
+          
+        </ul>
+      </section>
+      
     </article>
-   
-    </div>
-    </main>
+  </div>
+</main>
 </div>
-        <footer>
+    <footer>
 <div id="footer" class="container">
 <div class="grad-divider"></div>
     <nav>

@@ -1,20 +1,41 @@
 <!DOCTYPE html>
-<html>
-    <head>
-	<meta charset="utf-8" />
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>About Python Imports - Jozef Sukovsky</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	    
-    <meta name="twitter:card" content="Seeing some code snippets, sometimes hurts. Sometimes it hurts even more, realizing I&#39;m the author. But very often, it hurts right in the beginning of the file. The imports." />
-    <meta name="twitter:creator" content="@jozefsukovsky"/>
-    <meta property="og:url" content="https://sukovsky.com/posts/2-about-python-imports/" />
-    <meta property="og:title" content="About Python Imports" />
-    <meta property="og:description" content="Seeing some code snippets, sometimes hurts. Sometimes it hurts even more, realizing I&#39;m the author. But very often, it hurts right in the beginning of the file. The imports." />
-	<link rel="stylesheet" type="text/css" media="screen" href="https://sukovsky.com/css/normalize.css" />
-	<link rel="stylesheet" type="text/css" media="screen" href="https://sukovsky.com/css/syntax.css" />
-	<link rel="stylesheet" type="text/css" media="screen" href="https://sukovsky.com/css/cyberton.css" />
-</head><body><div class="grad-divider">
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>About Python Imports - Jozef Sukovsky</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+<meta name="description" content="Seeing some code snippets, sometimes hurts. Sometimes it hurts even more, realizing I&#39;m the author. But very often, it hurts right in the beginning of the file. The imports." />
+<meta name="twitter:card" content="Seeing some code snippets, sometimes hurts. Sometimes it hurts even more, realizing I&#39;m the author. But very often, it hurts right in the beginning of the file. The imports." />
+<meta
+  name="twitter:creator"
+  content="@jozefsukovsky"
+/>
+<meta property="og:url" content="https://sukovsky.com/posts/2-about-python-imports/" />
+<meta property="og:title" content="About Python Imports" />
+<meta property="og:description" content="Seeing some code snippets, sometimes hurts. Sometimes it hurts even more, realizing I&#39;m the author. But very often, it hurts right in the beginning of the file. The imports." />
+
+  <link
+    rel="stylesheet"
+    type="text/css"
+    media="screen"
+    href="https://sukovsky.com/css/normalize.css"
+  />
+  <link
+    rel="stylesheet"
+    type="text/css"
+    media="screen"
+    href="https://sukovsky.com/css/syntax.css"
+  />
+  <link
+    rel="stylesheet"
+    type="text/css"
+    media="screen"
+    href="https://sukovsky.com/css/cyberton.css"
+  />
+</head>
+<body><div class="grad-divider">
 <header>
 <div id="header" class="container">
     <div class="branding">
@@ -43,16 +64,20 @@
     </nav>
 </div>
 </header><div id="content">
-        
-    <main>
-    <div id="content" class="container">
-    
+<main>
+  <div id="content" class="container">
     <article>
-        <header>
-            <time datetime="2020-09-01 14:00:00 &#43;0000 &#43;0000">01 Sep 20 14:00 UTC</time><h1><a href="/posts/2-about-python-imports/">About Python Imports</a></h1>
-        </header>
-        <section>
-        <p>Seeing some code snippets, sometimes hurts. Sometimes it hurts even more, realizing I&rsquo;m the author. But very often, it hurts right in the beginning of the file. The imports.</p>
+      <header>
+        <time datetime="2020-09-01 14:00:00 &#43;0000 &#43;0000"
+          >01 Sep 20 14:00 UTC</time
+        ><h1>
+          <a href="/posts/2-about-python-imports/"
+            >About Python Imports</a
+          >
+        </h1>
+        <button id="copyLinkBtn">Copy link</button>
+      </header>
+      <section><p>Seeing some code snippets, sometimes hurts. Sometimes it hurts even more, realizing I&rsquo;m the author. But very often, it hurts right in the beginning of the file. The imports.</p>
 <h2 id="how-this-should-be-according-to-the-theory">How this should be according to the theory</h2>
 <p>Every other code editor or IDE has at least some possibility of linting. That&rsquo;s the feature which will bother you to fix some stuff while writing your code. Even though, many people just consider it some game, where sustaining these suggestions is the goal of it. Only it isn&rsquo;t.</p>
 <p>Every Python story begins at <a href="https://www.python.org/dev/peps/pep-0008/#imports">PEP-8</a>. I won&rsquo;t copy-paste it. Just read it, if you haven&rsquo;t before. Then go through <a href="https://www.python.org/dev/peps/pep-0328/">PEP-328</a>.</p>
@@ -148,29 +173,32 @@
 </span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 </span></span></code></pre></div><p>These don&rsquo;t really make much sense, plus both will cause Pylint complains, because <code>np</code> and <code>pd</code> are not descriptive variables. So, we just don&rsquo;t do this, when we use these tools in some &ldquo;programmed&rdquo; code base. However, we will see this around in many statistics/analytics/data science/&ldquo;data science&rdquo; tutorials, examples. And it just will be okay. As that is more about job done than having a sustainable code base.</p>
 <p>That is all. There are, for sure some Python internals which can explain all that above in a more exhausting way, but that is for some deeper Python developers to write. We ordinary ones will live long with the above.</p>
-
-        </section>
-        
-        
-        <section>
-            <h3>Tags</h3>
-            <ul class="tags">
-                
-                    <li><a class="tag-link" href="https://sukovsky.com/tags/python/">Python</a></li>
-            
-                    <li><a class="tag-link" href="https://sukovsky.com/tags/pep/">Pep</a></li>
-            
-                    <li><a class="tag-link" href="https://sukovsky.com/tags/import/">Import</a></li>
-            
-            </ul>
-        </section>
-        
+</section>
+       
+      <section>
+        <h3>Tags</h3>
+        <ul class="tags">
+          
+          <li>
+            <a class="tag-link" href="https://sukovsky.com/tags/python/">Python</a>
+          </li>
+          
+          <li>
+            <a class="tag-link" href="https://sukovsky.com/tags/pep/">Pep</a>
+          </li>
+          
+          <li>
+            <a class="tag-link" href="https://sukovsky.com/tags/import/">Import</a>
+          </li>
+          
+        </ul>
+      </section>
+      
     </article>
-   
-    </div>
-    </main>
+  </div>
+</main>
 </div>
-        <footer>
+    <footer>
 <div id="footer" class="container">
 <div class="grad-divider"></div>
     <nav>
