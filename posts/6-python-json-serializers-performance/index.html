@@ -16,6 +16,9 @@
 <meta property="og:title" content="Python JSON de/serialization speed-up and its impact on Django performance" />
 <meta property="og:description" content="What can we gain from different non-standard JSON libraries in Python" />
 
+<meta property="article:author" content="Jozef Sukovský" />
+<meta name="author" content="Jozef Sukovský" />
+<meta property="article:tag" content="json" /><meta property="article:tag" content="serialization" /><meta property="article:tag" content="python" /><meta property="article:tag" content="performance" />
   <link
     rel="stylesheet"
     type="text/css"
@@ -74,9 +77,7 @@
           <a href="/posts/6-python-json-serializers-performance/"
             >Python JSON de/serialization speed-up and its impact on Django performance</a
           >
-        </h1>
-        <button id="copyLinkBtn">Copy link</button>
-      </header>
+        </h1><address>By <span rel="author">Jozef Sukovský</span></address></header>
       <section><h2 id="intro">Intro</h2>
 <p>This is a non-direct follow-up to <a href="https://sukovsky.com/posts/5-stress-testing-django-drf-fastapi-expressjs-go-chi-axum/" title="article">Stress-testing Django, Django REST framework, FastAPI, Express.js, Go-chi and Axum</a>.</p>
 <p>The question we will answer is, how much can we squeeze from Django replacing the native json library. For most cases, standard json library does good enough. But sometimes, when we deal with huge payloads, it may be beneficial to do differently. In this article, we shall compare <code>json</code>, <code>simplejson</code>, <code>orjson</code>, <code>python-rapidjson</code>, <code>ultrajson</code>. Overall, there were some more, like <code>hyperjson</code>, <code>perde</code>, but such were already abandoned, or <code>pyserde</code> which I decided not to test because of a different usage pattern and the performance for this purpose wasn&rsquo;t impressive. Once we find the winner, we will replace the JsonResponse from the test setup from previous article and re-run the brute force load test.</p>
